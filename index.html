@@ -396,11 +396,8 @@ async function gen(){
   try{
     const txt=await pollinate([{role:"user",content:prompt}],"이야기생성");
     clearTimeout(t2);clearTimeout(t3);sst(4);
-    const clean=txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
-    const m=clean.match(/\{[\s\S]*\}/);
-    if(!m)throw new Error("응답 형식 오류. 다시 눌러주세요.");
-    const r=JSON.parse(m[0]);
-    if(!r.title||!r.story)throw new Error("이야기가 비어있어요. 다시 눌러주세요.");
+    const r=parseResp(txt,n);
+    if(!r)throw new Error("응답 형식 오류. 다시 눌러주세요.");
     setTimeout(()=>{setLd(false);rndr(r,n,wc);},300);
   }catch(e){
     clearTimeout(t2);clearTimeout(t3);
@@ -408,6 +405,34 @@ async function gen(){
     se("GE",e.message.includes("AI")?
       "AI 서버가 잠시 바빠요.\n5초 후 다시 눌러주세요 🙏":e.message);
   }
+}
+
+/* ── 응답 파싱 (다중 포맷 지원) ── */
+function parseResp(txt, n) {
+  if(!txt) return null;
+  // 1. OpenAI choices 포맷
+  try {
+    const oa=JSON.parse(txt);
+    if(oa.choices?.[0]?.message?.content) txt=oa.choices[0].message.content;
+  } catch(_){}
+  // 2. JSON 추출
+  const clean=txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
+  const m=clean.match(/\{[\s\S]*\}/);
+  if(m){
+    try{
+      const r=JSON.parse(m[0]);
+      if(r.title&&r.story) return r;
+      if(r.content) return {title:r.title||"이야기",story:r.content,words:r.words||[],easy:r.easy||[],medium:r.medium||[],hard:r.hard||[],trophy:r.trophy||"🏆 오늘의 단어왕 "+n+"!"};
+    }catch(_){}
+  }
+  // 3. 텍스트에서 직접 추출
+  const lines=txt.split("\n").map(l=>l.trim()).filter(Boolean);
+  if(lines.length>=2){
+    const title=lines[0].replace(/^[#\*"\s]+/,"").replace(/["\*]+$/,"").trim()||"이야기";
+    const story=lines.slice(1).join("\n");
+    if(story.length>20) return {title,story,words:[],easy:[],medium:[],hard:[],trophy:"🏆 오늘의 단어왕 "+n+"!"};
+  }
+  return null;
 }
 
 function rndr(r,n,wc){
