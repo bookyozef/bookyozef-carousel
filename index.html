@@ -21,9 +21,8 @@ body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#EEF
 .card{background:#fff;border-radius:16px;padding:16px 14px;margin-top:12px;box-shadow:0 2px 10px rgba(27,42,59,.07)}
 .lbl{font-size:13px;font-weight:700;margin-bottom:10px;display:block}
 .sub{font-size:11px;color:var(--muted);margin-bottom:4px;display:block;font-weight:600}
-input[type=text],input[type=number],select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;color:var(--navy);background:var(--gray);outline:none;-webkit-appearance:none}
-input:focus,select:focus,textarea:focus{border-color:var(--coral);background:#fff}
-textarea{resize:vertical;min-height:80px;line-height:1.6}
+input[type=text],input[type=number],select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;color:var(--navy);background:var(--gray);outline:none;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--coral);background:#fff}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .sb{border:2px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;background:var(--gray);font-family:inherit;transition:all .2s}
@@ -41,41 +40,27 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 .wr{display:flex;gap:6px;margin-bottom:4px}
 .wr input{flex:1;padding:8px 10px}
 .ab{padding:8px 14px;background:var(--navy);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
-
-/* 📸 사진 */
-.dz{border:2px dashed var(--border);border-radius:14px;padding:20px 14px;text-align:center;background:var(--gray);margin-bottom:12px;transition:all .2s}
-.dz.hi{padding:0;border-style:solid;border-color:var(--mint);background:#fff}
-.dz img{width:100%;max-height:200px;object-fit:cover;border-radius:12px 12px 0 0;display:block}
-.img-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(79,200,168,.12);border-radius:0 0 12px 12px}
-.cam-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
-.cbtn{display:inline-flex;align-items:center;gap:5px;padding:10px 14px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;position:relative}
-.cbtn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.dz{border:2px dashed var(--border);border-radius:14px;text-align:center;background:var(--gray);margin-bottom:12px;transition:all .2s;overflow:hidden}
+.dz-inner{padding:24px 14px}
+.dz.hi .dz-inner{padding:0}
+.dz img{width:100%;max-height:200px;object-fit:cover;display:block}
+.img-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(79,200,168,.12)}
+.cam-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.cbtn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;position:relative;overflow:hidden}
+.cbtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .cbtn-cam{background:var(--coral);color:#fff}
 .cbtn-gal{background:var(--navy);color:#fff}
-
-/* 단계 안내 */
-.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--gray);border-radius:12px;border:1.5px solid var(--border)}
-.step.done{background:#e8fff7;border-color:var(--mint)}
-.step-num{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--muted);flex-shrink:0}
-.step.done .step-num{background:var(--mint);color:#fff}
-.step-txt{font-size:13px;line-height:1.6;flex:1}
-.step-txt b{display:block;margin-bottom:2px;color:var(--navy)}
-.step-txt span{color:var(--muted);font-size:12px}
-.claude-btn{width:100%;padding:13px;background:linear-gradient(135deg,#7B61FF,#4F46E5);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
-.paste-area{border:2px dashed var(--border);border-radius:12px;padding:12px;background:var(--gray);margin-bottom:10px}
-.paste-area textarea{border:none;background:transparent;padding:0;font-size:13px;min-height:70px}
-.parse-btn{width:100%;padding:11px;background:var(--mint);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
-.parse-btn:disabled{background:#b0d8cf;cursor:not-allowed}
-
+.ext-btn{width:100%;padding:13px;background:var(--mint);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;margin-bottom:8px}
+.ext-btn:disabled{background:#b0d8cf;cursor:not-allowed}
 .bb{width:100%;padding:15px;background:var(--coral);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 14px rgba(232,101,74,.35);transition:all .2s}
 .bb:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
-.err{background:#fff0ee;border:1.5px solid #ffb8a8;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:12px;color:#c0392b;line-height:1.6;display:none}
+.err{background:#fff0ee;border:1.5px solid #ffb8a8;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:12px;color:#c0392b;line-height:1.7;white-space:pre-line;display:none}
 .err.on{display:block}
 .ld{display:none;background:#fff;border-radius:16px;padding:20px 14px;margin-top:12px;text-align:center;box-shadow:0 2px 10px rgba(27,42,59,.07)}
 .ld.on{display:block}
 .sp{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--coral);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.ld-msg{font-size:13px;color:var(--muted);margin-top:6px}
 .ls{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:12px;background:var(--gray);color:var(--muted);transition:all .4s}
 .ls.done{background:#e8fff7;color:#2a8c6e}
 .ls.act{background:var(--peach);color:var(--coral);font-weight:700}
@@ -104,13 +89,14 @@ tr:nth-child(even) td{background:var(--gray)}
 .trophy{background:linear-gradient(135deg,var(--yellow),#f0a500);border-radius:12px;padding:13px 16px;text-align:center;margin-top:7px}
 .trophy p{font-size:13px;font-weight:700;color:var(--navy);line-height:1.55}
 .rst{width:100%;padding:12px;background:var(--gray);color:var(--navy);border:1.5px solid var(--border);border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px}
+.info-box{background:#f0f4ff;border:1.5px solid #c7d2fe;border-radius:12px;padding:11px 13px;margin-top:10px;font-size:12px;line-height:1.7;color:#3730a3}
 </style>
 </head>
 <body>
 <div class="hero">
   <div class="hero-tag">오밀조밀 마을사전 × AI 📚</div>
-  <h1>사진 찍으면<br><em>이야기 뚝딱!</em></h1>
-  <p>책 사진 → 단어 추출 → 맞춤 스토리<br>그림 찾기 미션까지!</p>
+  <h1>사진 찍으면<br><em>이야기 뚝딱!</em> ✨</h1>
+  <p>책 사진 한 장 → 단어 자동 추출 → 맞춤 스토리<br>그림 찾기 미션까지 완전 자동!</p>
 </div>
 
 <div class="wrap">
@@ -122,28 +108,12 @@ tr:nth-child(even) td{background:var(--gray)}
   <!-- ── 📸 단어 추출 탭 ── -->
   <div id="ET" style="display:none">
     <div class="card">
-      <label class="lbl">📸 책 페이지 → 단어 추출</label>
-
-      <div class="steps" id="STEPS">
-        <div class="step" id="ST1">
-          <div class="step-num">1</div>
-          <div class="step-txt"><b>사진 선택</b><span>책 페이지가 잘 보이게 찍어주세요</span></div>
-        </div>
-        <div class="step" id="ST2">
-          <div class="step-num">2</div>
-          <div class="step-txt"><b>Claude.ai에서 단어 추출</b><span>버튼 클릭 → Claude.ai 자동 열림</span></div>
-        </div>
-        <div class="step" id="ST3">
-          <div class="step-num">3</div>
-          <div class="step-txt"><b>결과 붙여넣기</b><span>Claude 답변을 복사해서 아래에 붙여넣기</span></div>
-        </div>
-      </div>
-
-      <!-- STEP 1: 사진 -->
+      <label class="lbl">📸 책 페이지 → 단어 자동 추출</label>
       <div class="dz" id="DZ">
-        <div id="DP">
-          <div style="font-size:38px;margin-bottom:8px">📖</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px">책 페이지를 선택하세요</div>
+        <div class="dz-inner" id="DP">
+          <div style="font-size:40px;margin-bottom:10px">📖</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:5px">책 페이지를 찍어주세요</div>
+          <div style="font-size:12px;color:var(--muted)">단어가 선명하게 보이면 OK!</div>
           <div class="cam-btns">
             <label class="cbtn cbtn-cam">📷 카메라
               <input type="file" accept="image/*" capture="environment" onchange="hfi(event)">
@@ -153,7 +123,7 @@ tr:nth-child(even) td{background:var(--gray)}
             </label>
           </div>
         </div>
-        <div id="DV" style="display:none">
+        <div class="dz-inner" id="DV" style="display:none;padding:0">
           <img id="PI" src="" alt="">
           <div class="img-bar">
             <span style="font-size:12px;font-weight:700;color:#2a8c6e">✅ 사진 선택 완료</span>
@@ -162,29 +132,11 @@ tr:nth-child(even) td{background:var(--gray)}
         </div>
       </div>
 
-      <!-- STEP 2: Claude 열기 -->
-      <button class="claude-btn" id="CB" onclick="openClaude()" disabled>
-        🤖 Claude.ai 열고 단어 추출하기
-      </button>
-
-      <!-- STEP 3: 붙여넣기 -->
-      <div class="paste-area">
-        <span class="sub" style="margin-bottom:6px;display:block">📋 Claude 답변을 여기에 붙여넣기</span>
-        <textarea id="PA" placeholder='예시: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]
-
-또는 그냥 텍스트로도 OK:
-balloon - 풍선
-bucket - 양동이'></textarea>
-      </div>
-      <button class="parse-btn" id="PB" onclick="parseWords()">
-        ✅ 단어 적용하고 이야기 만들기
-      </button>
+      <button class="ext-btn" id="EB" onclick="exw()" disabled>🔍 단어 자동 추출하기</button>
       <div class="err" id="EE"></div>
     </div>
-
-    <div style="background:#f0f4ff;border:1.5px solid #c7d2fe;border-radius:12px;padding:12px 14px;margin-top:10px;font-size:12px;line-height:1.8;color:#3730a3">
-      💡 <strong>직접 입력도 OK!</strong><br>
-      사진 없이 아래 이야기 탭에서 단어를 직접 추가해도 돼요
+    <div class="info-box">
+      💡 추출이 안 되면 <strong>이야기 탭</strong>에서 단어를 직접 입력해도 돼요!
     </div>
   </div>
 
@@ -219,7 +171,7 @@ bucket - 양동이'></textarea>
         </div>
       </div>
       <span class="sub">좋아하는 것</span>
-      <input type="text" id="CL" placeholder="공주, 하츄핑, 공룡..." style="margin-bottom:10px">
+      <input type="text" id="CL" placeholder="공주, 하츄핑, 공룡, 로블록스..." style="margin-bottom:10px">
       <span class="sub">분위기</span>
       <div class="rg">
         <button class="rb on" data-v="모험" onclick="pm(this)">🏃 모험</button>
@@ -235,11 +187,13 @@ bucket - 양동이'></textarea>
   <!-- 로딩 -->
   <div class="ld" id="LD">
     <div class="sp"></div>
-    <div style="font-weight:700;font-size:14px;margin-bottom:4px">AI가 이야기를 짓고 있어요 ✍️</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">10~20초 정도 걸려요!</div>
-    <div class="ls" id="L1">🔍 단어 선별 중...</div>
-    <div class="ls" id="L2">📖 이야기 작성 중...</div>
-    <div class="ls" id="L3">🎮 미션 만드는 중...</div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:4px" id="LT">처리 중이에요...</div>
+    <div class="ld-msg" id="LM">잠깐만요!</div>
+    <div style="margin-top:10px">
+      <div class="ls" id="L1"></div>
+      <div class="ls" id="L2"></div>
+      <div class="ls" id="L3"></div>
+    </div>
   </div>
 
   <!-- 결과 -->
@@ -304,64 +258,117 @@ function rw(){
   document.getElementById("WL").textContent=`📝 단어 목록 (${W.length}개)`;
 }
 
-/* ── 이미지 ── */
-async function cmp(file){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);const sc=Math.min(1,900/Math.max(img.width,img.height)),w=Math.round(img.width*sc),h=Math.round(img.height*sc);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);res({url:c.toDataURL("image/jpeg",.75)});};img.onerror=rej;img.src=url;});}
-async function hfi(e){const file=e.target.files?.[0];if(!file)return;try{IMG=await cmp(file);document.getElementById("DP").style.display="none";document.getElementById("DV").style.display="block";document.getElementById("PI").src=IMG.url;document.getElementById("DZ").classList.add("hi");document.getElementById("CB").disabled=false;document.getElementById("ST1").classList.add("done");document.getElementById("ST1").querySelector(".step-num").textContent="✓";}catch(e){se("EE","이미지 오류");}}
-function rmImg(){IMG=null;document.getElementById("DP").style.display="block";document.getElementById("DV").style.display="none";document.getElementById("DZ").classList.remove("hi");document.getElementById("CB").disabled=true;document.getElementById("ST1").classList.remove("done");document.getElementById("ST1").querySelector(".step-num").textContent="1";}
-
-/* ── Claude.ai 열기 ── */
-function openClaude(){
-  const prompt=`이 책 페이지 사진에서 영어 단어와 한국어 뜻을 모두 추출해줘.
-JSON 형식으로만 반환해줘: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]
-다른 설명 없이 JSON만 반환.`;
-  // 프롬프트 클립보드 복사
-  navigator.clipboard.writeText(prompt).catch(()=>{});
-  // Claude.ai 새 탭 열기
-  window.open("https://claude.ai","_blank");
-  // 안내 표시
-  document.getElementById("ST2").classList.add("done");
-  document.getElementById("ST2").querySelector(".step-num").textContent="✓";
-  // 안내 토스트
-  const t=document.createElement("div");
-  t.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:999;text-align:center;max-width:300px;line-height:1.5";
-  t.innerHTML="📋 프롬프트가 복사됐어요!<br>Claude.ai에서 사진과 함께 붙여넣기 해주세요";
-  document.body.appendChild(t);setTimeout(()=>t.remove(),4000);
+/* ── 이미지 압축 (핵심: 400px 이하, 품질 0.5) ── */
+async function compress(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(),url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      // 최대 400px로 압축
+      const MAX=400;
+      const sc=Math.min(1,MAX/Math.max(img.width,img.height));
+      const w=Math.round(img.width*sc),h=Math.round(img.height*sc);
+      const c=document.createElement("canvas");c.width=w;c.height=h;
+      c.getContext("2d").drawImage(img,0,0,w,h);
+      const dataUrl=c.toDataURL("image/jpeg",0.5); // 품질 50%
+      const b64=dataUrl.split(",")[1];
+      console.log(`압축 완료: ${w}×${h}, ${Math.round(b64.length/1024)}KB`);
+      res({b64,dataUrl});
+    };
+    img.onerror=rej;img.src=url;
+  });
 }
 
-/* ── 붙여넣기 파싱 ── */
-function parseWords(){
-  const raw=document.getElementById("PA").value.trim();
-  if(!raw){se("EE","Claude 답변을 붙여넣어 주세요!");return;}
-  se("EE","");
-  // JSON 파싱 시도
+async function hfi(e){
+  const file=e.target.files?.[0];if(!file)return;
   try{
-    const clean=raw.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
-    const m=clean.match(/\[[\s\S]*?\]/);
-    if(m){const list=JSON.parse(m[0]);if(list.length){W=list.filter(w=>w.en);rw();sw("s");suc();return;}}
-  }catch(_){}
-  // 텍스트 파싱 (balloon - 풍선 또는 balloon(풍선) 형식)
-  const lines=raw.split(/\n/).map(l=>l.trim()).filter(Boolean);
-  const parsed=[];
-  for(const line of lines){
-    const m1=line.match(/^([A-Za-z][A-Za-z\s\-]*)[\s\-–:]+(.+)$/);
-    const m2=line.match(/^([A-Za-z][A-Za-z\s\-]*)\(([^)]+)\)/);
-    if(m2)parsed.push({en:m2[1].trim(),kr:m2[2].trim()});
-    else if(m1)parsed.push({en:m1[1].trim(),kr:m1[2].trim()});
-  }
-  if(parsed.length){W=parsed;rw();sw("s");suc();return;}
-  se("EE","단어를 인식하지 못했어요. Claude 답변을 그대로 붙여넣어 주세요.");
+    IMG=await compress(file);
+    document.getElementById("DP").style.display="none";
+    document.getElementById("DV").style.display="block";
+    document.getElementById("PI").src=IMG.dataUrl;
+    document.getElementById("DZ").classList.add("hi");
+    document.getElementById("EB").disabled=false;
+  }catch(e){se("EE","이미지 로드 실패");}
 }
-function suc(){
-  document.getElementById("ST3").classList.add("done");
-  document.getElementById("ST3").querySelector(".step-num").textContent="✓";
-  document.getElementById("PA").value="";
-  const t=document.createElement("div");
-  t.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--mint);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:999";
-  t.textContent=`✅ ${W.length}개 단어 추출 완료!`;
-  document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+function rmImg(){
+  IMG=null;
+  document.getElementById("DP").style.display="block";
+  document.getElementById("DV").style.display="none";
+  document.getElementById("DZ").classList.remove("hi");
+  document.getElementById("EB").disabled=true;
 }
 
-/* ── AI 이야기 생성 ── */
+/* ── Pollinations AI 호출 ── */
+async function pollinate(messages, label){
+  const MODELS=["openai","openai-large"];
+  for(const model of MODELS){
+    try{
+      const r=await fetch("https://text.pollinations.ai/",{
+        method:"POST",
+        mode:"cors",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({model,messages,seed:Math.floor(Math.random()*9999),private:true}),
+        signal:AbortSignal.timeout(35000)
+      });
+      if(r.ok){
+        const t=await r.text();
+        if(t&&t.length>20){console.log(`${label} 성공 (${model})`);return t;}
+      }
+    }catch(e){console.log(`${label} 실패 (${model}):`,e.message);}
+  }
+  // GET 폴백
+  const txt=typeof messages[messages.length-1].content==="string"
+    ?messages[messages.length-1].content
+    :messages[messages.length-1].content.find(c=>c.type==="text")?.text||"";
+  try{
+    const r=await fetch(`https://text.pollinations.ai/${encodeURIComponent(txt.slice(0,2000))}?model=openai&seed=${Math.floor(Math.random()*9999)}`,
+      {mode:"cors",signal:AbortSignal.timeout(35000)});
+    if(r.ok){const t=await r.text();if(t&&t.length>20)return t;}
+  }catch(e){console.log("GET 폴백 실패:",e.message);}
+  throw new Error("AI 연결 실패");
+}
+
+/* ── 단어 추출 ── */
+async function exw(){
+  if(!IMG)return;
+  se("EE","");
+  setLd(true,"단어를 찾고 있어요 🔍","사진에서 영어 단어를 읽는 중...",
+    ["📷 이미지 분석 중...","🔤 단어 인식 중...","📋 목록 정리 중..."]);
+
+  try{
+    const messages=[{
+      role:"user",
+      content:[
+        {type:"image_url",image_url:{url:`data:image/jpeg;base64,${IMG.b64}`}},
+        {type:"text",text:`This is a children's English picture dictionary page. List ALL English words visible with Korean meanings. Return ONLY a JSON array with no explanation: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]`}
+      ]
+    }];
+
+    sst(1);
+    const txt=await pollinate(messages,"단어추출");
+    sst(3);
+
+    // JSON 파싱
+    const clean=txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
+    const m=clean.match(/\[[\s\S]*?\]/);
+    if(!m)throw new Error("단어 목록을 찾지 못했어요.\n단어가 잘 보이는 사진으로 다시 시도해주세요.");
+    const list=JSON.parse(m[0]).filter(w=>w.en);
+    if(!list.length)throw new Error("추출된 단어가 없어요.");
+
+    W=list;rw();
+    setTimeout(()=>{
+      setLd(false);
+      sw("s");
+      toast(`✅ ${W.length}개 단어 추출 완료!`);
+    },400);
+  }catch(e){
+    setLd(false);
+    se("EE",e.message.includes("AI")?
+      "AI 서버가 잠시 바빠요.\n잠깐 기다렸다가 다시 눌러주세요 🙏":e.message);
+  }
+}
+
+/* ── 이야기 생성 ── */
 async function gen(){
   if(!W.length){se("GE","단어를 최소 1개 추가해주세요!");return;}
   se("GE","");
@@ -370,55 +377,45 @@ async function gen(){
   const g=document.getElementById("CG").value;
   const lk=document.getElementById("CL").value.trim();
   const wc=document.getElementById("WC").value;
-  let uw=[...W];if(wc==="5"&&W.length>5)uw=W.slice(0,5);else if(wc==="10"&&W.length>10)uw=W.slice(0,10);
+  let uw=[...W];
+  if(wc==="5"&&W.length>5)uw=W.slice(0,5);
+  else if(wc==="10"&&W.length>10)uw=W.slice(0,10);
   const wl=uw.map(w=>`${w.en}(${w.kr||""})`).join(", ");
-  const prompt=`너는 최고의 어린이 이야기 작가야. JSON만 반환. 마크다운 없이.
-[아이] 이름:${n}/나이:${a}살${g?"/"+g:""}${lk?"/좋아:"+lk:""}
-[분위기] ${MOOD}/[계절] ${SEA}/[단어] ${wl}
-조건: 8~10문장/기승전결/단어마다 반드시 word(뜻) 형식/무서움금지/${n}이 해결
-정확히 이 형식: {"title":"제목","story":"이야기","words":[{"en":"balloon","kr":"풍선","hint":"역할"}],"easy":[{"mission":"□ balloon(풍선)을 찾아봐!"}],"medium":[{"mission":"□ trumpet(트럼펫) 든 사람 찾기!"}],"hard":[{"mission":"□ paintbrush(붓) 옆 물건 말하기!"}],"trophy":"🏆 오늘의 단어왕 ${n}!"}`;
 
-  sld(true);sst(1);
-  const t2=setTimeout(()=>sst(2),4000),t3=setTimeout(()=>sst(3),8000);
-  let ok=false;
+  const prompt=`어린이 이야기 작가야. JSON만 반환. 마크다운·백틱 금지.
+아이:${n}/${a}살${g?"/"+g:""}${lk?"/좋아:"+lk:""}
+분위기:${MOOD}/계절:${SEA}/단어:${wl}
+규칙:한국어 8~10문장/기승전결/word(뜻) 형식 필수/${n}이 해결/무섭지 않게
+형식:{"title":"제목","story":"이야기 (word(뜻) 형식 필수)","words":[{"en":"balloon","kr":"풍선","hint":"역할"}],"easy":[{"mission":"balloon(풍선)을 찾아봐!"}],"medium":[{"mission":"trumpet(트럼펫) 든 사람 찾기!"}],"hard":[{"mission":"paintbrush(붓) 옆 물건 말하기!"}],"trophy":"🏆 오늘의 단어왕 ${n}!"}`;
 
-  // 시도 1: Pollinations POST
+  setLd(true,"이야기를 짓고 있어요 ✍️","15~20초 정도 걸려요!",
+    ["🔍 단어 선별 중...","📖 이야기 작성 중...","🎮 미션 만드는 중..."]);
+  sst(1);
+  const t2=setTimeout(()=>sst(2),5000),t3=setTimeout(()=>sst(3),10000);
+
   try{
-    const r=await fetch("https://text.pollinations.ai/",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({messages:[{role:"user",content:prompt}],model:"openai",seed:Math.floor(Math.random()*9999),private:true}),
-      signal:AbortSignal.timeout(30000)
-    });
-    if(r.ok){const t=await r.text();if(t.length>50){ok=true;clearTimeout(t2);clearTimeout(t3);sst(4);setTimeout(()=>{sld(false);prse(t,n,wc);},200);}}
-  }catch(_){}
-
-  if(!ok){
-  // 시도 2: Pollinations GET
-  try{
-    const enc=encodeURIComponent(prompt.slice(0,2500));
-    const r=await fetch(`https://text.pollinations.ai/${enc}?model=openai&seed=${Math.floor(Math.random()*9999)}`,{signal:AbortSignal.timeout(30000)});
-    if(r.ok){const t=await r.text();if(t.length>50){ok=true;clearTimeout(t2);clearTimeout(t3);sst(4);setTimeout(()=>{sld(false);prse(t,n,wc);},200);}}
-  }catch(_){}
-  }
-
-  if(!ok){clearTimeout(t2);clearTimeout(t3);sld(false);se("GE","AI 연결에 실패했어요. 잠시 후 다시 눌러주세요.\n(Pollinations 서버가 잠시 느릴 수 있어요 🙏)");}
-}
-
-function prse(txt,n,wc){
-  try{
+    const txt=await pollinate([{role:"user",content:prompt}],"이야기생성");
+    clearTimeout(t2);clearTimeout(t3);sst(4);
     const clean=txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
     const m=clean.match(/\{[\s\S]*\}/);
-    if(!m)throw new Error("형식 오류");
+    if(!m)throw new Error("응답 형식 오류. 다시 눌러주세요.");
     const r=JSON.parse(m[0]);
-    if(!r.title||!r.story)throw new Error("내용 없음");
-    rndr(r,n,wc);
-  }catch(e){se("GE","응답 파싱 실패. 다시 시도해주세요.");}
+    if(!r.title||!r.story)throw new Error("이야기가 비어있어요. 다시 눌러주세요.");
+    setTimeout(()=>{setLd(false);rndr(r,n,wc);},300);
+  }catch(e){
+    clearTimeout(t2);clearTimeout(t3);
+    setLd(false);
+    se("GE",e.message.includes("AI")?
+      "AI 서버가 잠시 바빠요.\n5초 후 다시 눌러주세요 🙏":e.message);
+  }
 }
 
 function rndr(r,n,wc){
   document.getElementById("RTI").textContent="📖 "+r.title;
   document.getElementById("RME").textContent=`${n} · ${SEA} · ${wc==="all"?"전체":wc+"개"} 단어`;
-  document.getElementById("STX").innerHTML=r.story.replace(/([A-Za-z][A-Za-z\s\-]*?)\(([^)]{1,20})\)/g,(_,en,kr)=>`<mark>${en.trim()}(${kr})</mark>`).replace(/\n/g,"<br>");
+  document.getElementById("STX").innerHTML=r.story
+    .replace(/([A-Za-z][A-Za-z\s\-]*?)\(([^)]{1,20})\)/g,(_,en,kr)=>`<mark>${en.trim()}(${kr})</mark>`)
+    .replace(/\n/g,"<br>");
   const tb=document.getElementById("WB");tb.innerHTML="";
   (r.words||[]).forEach(w=>{const tr=document.createElement("tr");tr.innerHTML=`<td class="ten">${w.en}</td><td>${w.kr}</td><td style="color:var(--muted);font-size:11px">${w.hint||""}</td>`;tb.appendChild(tr);});
   const mel=document.getElementById("MIS");mel.innerHTML="";
@@ -434,12 +431,23 @@ function rndr(r,n,wc){
   document.getElementById("RE").className="res on";
   document.getElementById("RE").scrollIntoView({behavior:"smooth",block:"start"});
 }
+
+function setLd(on,title,msg,steps){
+  document.getElementById("GB").disabled=on;
+  document.getElementById("LD").className="ld"+(on?" on":"");
+  if(on&&title){
+    document.getElementById("LT").textContent=title;
+    document.getElementById("LM").textContent=msg||"";
+    if(steps)steps.forEach((s,i)=>{const el=document.getElementById("L"+(i+1));el.textContent=s;el.className="ls";});
+  }
+  if(!on)document.getElementById("RE").className="res";
+}
+function sst(n){[1,2,3].forEach(i=>{const el=document.getElementById("L"+i);if(el.textContent)el.className="ls"+(i<n?" done":i===n?" act":"");});}
 function tc(id){const el=document.getElementById(id),on=!el.classList.contains("on");el.className="mc"+(on?" on":"");el.innerHTML=on?"✓":"";}
 async function cpR(){try{await navigator.clipboard.writeText(CPT);}catch{const t=document.createElement("textarea");t.value=CPT;document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t);}const btn=document.getElementById("CPB");btn.textContent="✅ 복사됨";btn.classList.add("ok");setTimeout(()=>{btn.textContent="📋 복사";btn.classList.remove("ok");},2000);}
 function rst(){document.getElementById("RE").className="res";window.scrollTo({top:0,behavior:"smooth"});}
-function sld(on){document.getElementById("GB").disabled=on;document.getElementById("LD").className="ld"+(on?" on":"");if(!on)document.getElementById("RE").className="res";}
-function sst(n){[1,2,3].forEach(i=>{const el=document.getElementById("L"+i);el.className="ls"+(i<n?" done":i===n?" act":"");});}
 function se(id,m){const el=document.getElementById(id);el.textContent=m;el.className="err"+(m?" on":"");}
+function toast(msg){const t=document.createElement("div");t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
 </script>
 </body>
 </html>
