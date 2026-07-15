@@ -281,6 +281,65 @@ input:focus,select:focus{border-color:var(--coral);background:#fff}
 </div>
 
 <script>
+
+// ── 안전한 JSON 파서 ──
+function safeParseJSON(txt) {
+  if (!txt) return null;
+  // 1. 코드블록 제거
+  let s = txt.replace(/```[\w]*/g, "").replace(/```/g, "").trim();
+  // 2. 줄바꿈을 공백으로 (JSON 문자열 내부 줄바꿈 방지)
+  // 3. 중괄호 블록 찾기
+  const start = s.indexOf("{");
+  const end = s.lastIndexOf("}");
+  if (start === -1 || end === -1) return null;
+  let jsonStr = s.slice(start, end + 1);
+  // 4. 제어문자 제거 (줄바꿈 제외)
+  jsonStr = jsonStr.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
+  // 5. story 필드 내부의 따옴표 이스케이프
+  jsonStr = jsonStr.replace(/"story"\s*:\s*"((?:[^"\\]|\\.)*)"/gs, (match, story) => {
+    const fixed = story.replace(/(?<!\\)"/g, '\\"').replace(/\n/g, "\\n");
+    return `"story":"${fixed}"`;
+  });
+  try {
+    return JSON.parse(jsonStr);
+  } catch(e) {
+    // 6. story 값을 단순 추출해서 재조합
+    try {
+      const titleM = jsonStr.match(/"title"\s*:\s*"([^"]+)"/);
+      const storyM = txt.match(/"story"\s*:\s*"([\s\S]*?)(?=","words"|","easy")/);
+      if (titleM && storyM) {
+        // 나머지 JSON에서 배열들만 추출
+        const wordsM = jsonStr.match(/"words"\s*:\s*(\[[\s\S]*?\])/);
+        const easyM = jsonStr.match(/"easy"\s*:\s*(\[[\s\S]*?\])/);
+        const medM = jsonStr.match(/"medium"\s*:\s*(\[[\s\S]*?\])/);
+        const hardM = jsonStr.match(/"hard"\s*:\s*(\[[\s\S]*?\])/);
+        const trophyM = jsonStr.match(/"trophy"\s*:\s*"([^"]+)"/);
+        return {
+          title: titleM[1],
+          story: storyM[1].replace(/\\n/g,"\n"),
+          words: wordsM ? JSON.parse(wordsM[1]) : [],
+          easy: easyM ? JSON.parse(easyM[1]) : [],
+          medium: medM ? JSON.parse(medM[1]) : [],
+          hard: hardM ? JSON.parse(hardM[1]) : [],
+          trophy: trophyM ? trophyM[1] : "🏆 오늘의 단어왕!"
+        };
+      }
+    } catch(_) {}
+    return null;
+  }
+}
+
+function safeParseArray(txt) {
+  if (!txt) return null;
+  let s = txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
+  const start = s.indexOf("[");
+  const end = s.lastIndexOf("]");
+  if (start === -1 || end === -1) return null;
+  let jsonStr = s.slice(start, end+1);
+  jsonStr = jsonStr.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,"");
+  try { return JSON.parse(jsonStr); } catch(_) { return null; }
+}
+
 // ── API 설정 ──
 const GK = ["AQ.Ab8RN6Kzdp70dvL","0Sa9zAqTimZZK3IhrP","tWQjr4PEDNIqxm1gQ"].join("");
 const GAPI = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GK;
@@ -444,13 +503,13 @@ JSON 배열만 반환해. 다른 설명이나 마크다운 없이.
     ]);
     setStep(3);
 
-    const clean = txt.replace(/\`\`\`\w*/g, "").replace(/\`\`\`/g, "").trim();
-    const m = clean.match(/\[[\s\S]*?\]/);
-    if (!m) throw new Error("단어 목록을 찾지 못했어요.\n책 페이지가 선명하게 보이게 다시 찍어주세요.");
-    const list = JSON.parse(m[0]).filter(w => w.en && w.kr);
-    if (!list.length) throw new Error("추출된 단어가 없어요. 다시 시도해주세요.");
+    const list = safeParseArray(txt);
+    if (!list || !list.length) throw new Error("단어 목록을 찾지 못했어요.\n책 페이지가 선명하게 보이게 다시 찍어주세요.");
+    const filtered = list.filter(w => w.en && w.kr);
+    if (!filtered.length) throw new Error("추출된 단어가 없어요. 다시 시도해주세요.");
+    const list2 = filtered;
 
-    words = list;
+    words = list2;
     renderWords();
     setTimeout(() => {
       showLoading(false);
@@ -499,7 +558,7 @@ async function generateStory() {
 - 생동감 있고 재미있게
 
 [출력 형식 - 반드시 이 JSON만]
-{"title":"이야기 제목","story":"8~10문장 이야기 (각 단어마다 word(뜻) 형식 필수)","words":[{"en":"balloon","kr":"풍선","hint":"이야기에서 한 역할"}],"easy":[{"mission":"balloon(풍선)을 그림에서 찾아봐!"}],"medium":[{"mission":"bucket(양동이)을 들고 있는 사람은 누구?"}],"hard":[{"mission":"paintbrush(붓) 바로 옆에 있는 물건은?"}],"trophy":"🏆 오늘의 단어왕 ${name}! 모든 단어를 완벽하게 익혔어요!"}`;
+{"title":"이야기 제목","story":"8~10문장을 한 줄로 이어서 작성. 줄바꿈 없이. 각 단어 word(뜻) 형식 필수.","words":[{"en":"balloon","kr":"풍선","hint":"이야기에서 한 역할"}],"easy":[{"mission":"balloon(풍선)을 그림에서 찾아봐!"}],"medium":[{"mission":"bucket(양동이)을 들고 있는 사람은 누구?"}],"hard":[{"mission":"paintbrush(붓) 바로 옆에 있는 물건은?"}],"trophy":"🏆 오늘의 단어왕 ${name}! 모든 단어를 완벽하게 익혔어요!"}`;
 
   showLoading(true, "이야기를 짓고 있어요 ✍️", "10~20초 정도 걸려요!",
     ["🔍 단어 선별 중...", "📖 이야기 작성 중...", "🎮 미션 만드는 중..."]);
@@ -511,11 +570,8 @@ async function generateStory() {
     const txt = await callGemini([{ text: prompt }]);
     clearTimeout(t2); clearTimeout(t3); setStep(4);
 
-    const clean = txt.replace(/\`\`\`\w*/g, "").replace(/\`\`\`/g, "").trim();
-    const m = clean.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error("응답 형식 오류. 다시 눌러주세요.");
-    const r = JSON.parse(m[0]);
-    if (!r.title || !r.story) throw new Error("이야기 생성 실패. 다시 눌러주세요.");
+    const r = safeParseJSON(txt);
+    if (!r || !r.title || !r.story) throw new Error("응답 파싱 실패. 다시 눌러주세요.");
 
     setTimeout(() => { showLoading(false); renderResult(r, name, season, wc); }, 300);
 
