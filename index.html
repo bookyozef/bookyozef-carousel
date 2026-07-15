@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>오밀조밀 AI 스토리</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--coral:#E8654A;--navy:#1B2A3B;--mint:#4FC8A8;--yellow:#F5C842;--gray:#F4F6F8;--border:#E0E5EB;--muted:#7A8B9C;--peach:#FFF0EC}
@@ -40,17 +41,20 @@ input:focus,select:focus{border-color:var(--coral);background:#fff}
 .wr{display:flex;gap:6px;margin-bottom:4px}
 .wr input{flex:1;padding:8px 10px}
 .ab{padding:8px 14px;background:var(--navy);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
-.dz{border:2px dashed var(--border);border-radius:14px;text-align:center;background:var(--gray);margin-bottom:12px;transition:all .2s;overflow:hidden}
-.dz-inner{padding:24px 14px}
+.dz{border:2px dashed var(--border);border-radius:14px;background:var(--gray);margin-bottom:12px;transition:all .2s;overflow:hidden}
+.dz-inner{padding:22px 14px;text-align:center}
 .dz.hi .dz-inner{padding:0}
 .dz img{width:100%;max-height:200px;object-fit:cover;display:block}
 .img-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(79,200,168,.12)}
-.cam-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.cbtn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;position:relative;overflow:hidden}
+.cam-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.cbtn{display:inline-flex;align-items:center;gap:5px;padding:10px 14px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;position:relative;overflow:hidden}
 .cbtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .cbtn-cam{background:var(--coral);color:#fff}
 .cbtn-gal{background:var(--navy);color:#fff}
-.ext-btn{width:100%;padding:13px;background:var(--mint);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;margin-bottom:8px}
+.prog{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px;display:none}
+.prog.on{display:block}
+.prog-bar{height:100%;background:var(--mint);border-radius:3px;transition:width .3s;width:0%}
+.ext-btn{width:100%;padding:13px;background:var(--mint);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px;transition:all .2s}
 .ext-btn:disabled{background:#b0d8cf;cursor:not-allowed}
 .bb{width:100%;padding:15px;background:var(--coral);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 14px rgba(232,101,74,.35);transition:all .2s}
 .bb:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
@@ -60,7 +64,6 @@ input:focus,select:focus{border-color:var(--coral);background:#fff}
 .ld.on{display:block}
 .sp{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--coral);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ld-msg{font-size:13px;color:var(--muted);margin-top:6px}
 .ls{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:12px;background:var(--gray);color:var(--muted);transition:all .4s}
 .ls.done{background:#e8fff7;color:#2a8c6e}
 .ls.act{background:var(--peach);color:var(--coral);font-weight:700}
@@ -89,7 +92,6 @@ tr:nth-child(even) td{background:var(--gray)}
 .trophy{background:linear-gradient(135deg,var(--yellow),#f0a500);border-radius:12px;padding:13px 16px;text-align:center;margin-top:7px}
 .trophy p{font-size:13px;font-weight:700;color:var(--navy);line-height:1.55}
 .rst{width:100%;padding:12px;background:var(--gray);color:var(--navy);border:1.5px solid var(--border);border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px}
-.info-box{background:#f0f4ff;border:1.5px solid #c7d2fe;border-radius:12px;padding:11px 13px;margin-top:10px;font-size:12px;line-height:1.7;color:#3730a3}
 </style>
 </head>
 <body>
@@ -105,22 +107,18 @@ tr:nth-child(even) td{background:var(--gray)}
     <button class="tab off" onclick="sw('e')" id="TE">📸 단어 추출</button>
   </div>
 
-  <!-- ── 📸 단어 추출 탭 ── -->
+  <!-- ── 📸 단어 추출 ── -->
   <div id="ET" style="display:none">
     <div class="card">
       <label class="lbl">📸 책 페이지 → 단어 자동 추출</label>
       <div class="dz" id="DZ">
         <div class="dz-inner" id="DP">
-          <div style="font-size:40px;margin-bottom:10px">📖</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:5px">책 페이지를 찍어주세요</div>
+          <div style="font-size:38px;margin-bottom:8px">📖</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">책 페이지를 찍어주세요</div>
           <div style="font-size:12px;color:var(--muted)">단어가 선명하게 보이면 OK!</div>
           <div class="cam-btns">
-            <label class="cbtn cbtn-cam">📷 카메라
-              <input type="file" accept="image/*" capture="environment" onchange="hfi(event)">
-            </label>
-            <label class="cbtn cbtn-gal">🖼️ 갤러리
-              <input type="file" accept="image/*" onchange="hfi(event)">
-            </label>
+            <label class="cbtn cbtn-cam">📷 카메라<input type="file" accept="image/*" capture="environment" onchange="hfi(event)"></label>
+            <label class="cbtn cbtn-gal">🖼️ 갤러리<input type="file" accept="image/*" onchange="hfi(event)"></label>
           </div>
         </div>
         <div class="dz-inner" id="DV" style="display:none;padding:0">
@@ -131,16 +129,18 @@ tr:nth-child(even) td{background:var(--gray)}
           </div>
         </div>
       </div>
-
+      <div class="prog" id="PG"><div class="prog-bar" id="PB"></div></div>
+      <div id="PS" style="font-size:12px;color:var(--muted);margin-bottom:8px;text-align:center;display:none"></div>
       <button class="ext-btn" id="EB" onclick="exw()" disabled>🔍 단어 자동 추출하기</button>
       <div class="err" id="EE"></div>
     </div>
-    <div class="info-box">
-      💡 추출이 안 되면 <strong>이야기 탭</strong>에서 단어를 직접 입력해도 돼요!
+    <div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:11px 13px;margin-top:10px;font-size:12px;line-height:1.7;color:#0369a1">
+      💡 <strong>브라우저 OCR</strong>로 작동해요 — 인터넷 연결 없어도 단어 추출 가능!<br>
+      단어가 잘 안 보이면 이야기 탭에서 직접 입력도 OK
     </div>
   </div>
 
-  <!-- ── ✨ 이야기 만들기 탭 ── -->
+  <!-- ── ✨ 이야기 만들기 ── -->
   <div id="ST">
     <div class="card">
       <label class="lbl">📅 계절</label>
@@ -171,7 +171,7 @@ tr:nth-child(even) td{background:var(--gray)}
         </div>
       </div>
       <span class="sub">좋아하는 것</span>
-      <input type="text" id="CL" placeholder="공주, 하츄핑, 공룡, 로블록스..." style="margin-bottom:10px">
+      <input type="text" id="CL" placeholder="공주, 하츄핑, 공룡..." style="margin-bottom:10px">
       <span class="sub">분위기</span>
       <div class="rg">
         <button class="rb on" data-v="모험" onclick="pm(this)">🏃 모험</button>
@@ -187,22 +187,17 @@ tr:nth-child(even) td{background:var(--gray)}
   <!-- 로딩 -->
   <div class="ld" id="LD">
     <div class="sp"></div>
-    <div style="font-weight:700;font-size:14px;margin-bottom:4px" id="LT">처리 중이에요...</div>
-    <div class="ld-msg" id="LM">잠깐만요!</div>
-    <div style="margin-top:10px">
-      <div class="ls" id="L1"></div>
-      <div class="ls" id="L2"></div>
-      <div class="ls" id="L3"></div>
-    </div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:4px" id="LT">처리 중...</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px" id="LM"></div>
+    <div class="ls" id="L1"></div>
+    <div class="ls" id="L2"></div>
+    <div class="ls" id="L3"></div>
   </div>
 
   <!-- 결과 -->
   <div class="res" id="RE">
     <div class="rh">
-      <div style="flex:1;min-width:0">
-        <div class="rt" id="RTI">📖</div>
-        <div class="rm" id="RME"></div>
-      </div>
+      <div style="flex:1;min-width:0"><div class="rt" id="RTI">📖</div><div class="rm" id="RME"></div></div>
       <button class="cpb" id="CPB" onclick="cpR()">📋 복사</button>
     </div>
     <div class="rb2">
@@ -218,7 +213,6 @@ tr:nth-child(even) td{background:var(--gray)}
       <button class="rst" onclick="rst()">🔄 다른 이야기 만들기</button>
     </div>
   </div>
-
   <div style="text-align:center;padding:24px 0 8px;font-size:12px;color:var(--muted)">Made with ❤️ for <strong style="color:var(--coral)">@bookyozef</strong></div>
 </div>
 
@@ -258,37 +252,17 @@ function rw(){
   document.getElementById("WL").textContent=`📝 단어 목록 (${W.length}개)`;
 }
 
-/* ── 이미지 압축 (핵심: 400px 이하, 품질 0.5) ── */
-async function compress(file){
-  return new Promise((res,rej)=>{
-    const img=new Image(),url=URL.createObjectURL(file);
-    img.onload=()=>{
-      URL.revokeObjectURL(url);
-      // 최대 400px로 압축
-      const MAX=400;
-      const sc=Math.min(1,MAX/Math.max(img.width,img.height));
-      const w=Math.round(img.width*sc),h=Math.round(img.height*sc);
-      const c=document.createElement("canvas");c.width=w;c.height=h;
-      c.getContext("2d").drawImage(img,0,0,w,h);
-      const dataUrl=c.toDataURL("image/jpeg",0.5); // 품질 50%
-      const b64=dataUrl.split(",")[1];
-      console.log(`압축 완료: ${w}×${h}, ${Math.round(b64.length/1024)}KB`);
-      res({b64,dataUrl});
-    };
-    img.onerror=rej;img.src=url;
-  });
-}
-
+/* ── 이미지 선택 ── */
 async function hfi(e){
   const file=e.target.files?.[0];if(!file)return;
-  try{
-    IMG=await compress(file);
-    document.getElementById("DP").style.display="none";
-    document.getElementById("DV").style.display="block";
-    document.getElementById("PI").src=IMG.dataUrl;
-    document.getElementById("DZ").classList.add("hi");
-    document.getElementById("EB").disabled=false;
-  }catch(e){se("EE","이미지 로드 실패");}
+  const url=URL.createObjectURL(file);
+  IMG={file,url};
+  document.getElementById("DP").style.display="none";
+  document.getElementById("DV").style.display="block";
+  document.getElementById("PI").src=url;
+  document.getElementById("DZ").classList.add("hi");
+  document.getElementById("EB").disabled=false;
+  se("EE","");
 }
 function rmImg(){
   IMG=null;
@@ -298,74 +272,123 @@ function rmImg(){
   document.getElementById("EB").disabled=true;
 }
 
-/* ── Pollinations AI 호출 ── */
-async function pollinate(messages, label){
-  const MODELS=["openai","openai-large"];
-  for(const model of MODELS){
-    try{
-      const r=await fetch("https://text.pollinations.ai/",{
-        method:"POST",
-        mode:"cors",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model,messages,seed:Math.floor(Math.random()*9999),private:true}),
-        signal:AbortSignal.timeout(35000)
-      });
-      if(r.ok){
-        const t=await r.text();
-        if(t&&t.length>20){console.log(`${label} 성공 (${model})`);return t;}
-      }
-    }catch(e){console.log(`${label} 실패 (${model}):`,e.message);}
-  }
-  // GET 폴백
-  const txt=typeof messages[messages.length-1].content==="string"
-    ?messages[messages.length-1].content
-    :messages[messages.length-1].content.find(c=>c.type==="text")?.text||"";
-  try{
-    const r=await fetch(`https://text.pollinations.ai/${encodeURIComponent(txt.slice(0,2000))}?model=openai&seed=${Math.floor(Math.random()*9999)}`,
-      {mode:"cors",signal:AbortSignal.timeout(35000)});
-    if(r.ok){const t=await r.text();if(t&&t.length>20)return t;}
-  }catch(e){console.log("GET 폴백 실패:",e.message);}
-  throw new Error("AI 연결 실패");
-}
-
-/* ── 단어 추출 ── */
+/* ── OCR 단어 추출 ── */
 async function exw(){
   if(!IMG)return;
   se("EE","");
-  setLd(true,"단어를 찾고 있어요 🔍","사진에서 영어 단어를 읽는 중...",
-    ["📷 이미지 분석 중...","🔤 단어 인식 중...","📋 목록 정리 중..."]);
+  document.getElementById("EB").disabled=true;
+  document.getElementById("PG").classList.add("on");
+  document.getElementById("PS").style.display="block";
 
   try{
-    const messages=[{
-      role:"user",
-      content:[
-        {type:"image_url",image_url:{url:`data:image/jpeg;base64,${IMG.b64}`}},
-        {type:"text",text:`This is a children's English picture dictionary page. List ALL English words visible with Korean meanings. Return ONLY a JSON array with no explanation: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]`}
-      ]
-    }];
+    // 1단계: Tesseract OCR
+    upd(10,"📷 이미지 분석 준비 중...");
+    const worker=await Tesseract.createWorker("eng",1,{
+      logger: m=>{
+        if(m.status==="recognizing text"){
+          const p=Math.round(m.progress*70)+10;
+          upd(p,"🔤 글자 인식 중... "+Math.round(m.progress*100)+"%");
+        }
+      }
+    });
+    upd(15,"🔤 영어 단어 읽는 중...");
+    const {data:{text}}=await worker.recognize(IMG.file);
+    await worker.terminate();
+    upd(80,"📋 단어 정리 중...");
 
-    sst(1);
-    const txt=await pollinate(messages,"단어추출");
-    sst(3);
+    // 2단계: OCR 결과에서 영어 단어 추출
+    const rawWords=extractEnglishWords(text);
+    console.log("OCR 원문:", text);
+    console.log("추출 단어:", rawWords);
 
-    // JSON 파싱
-    const clean=txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
-    const m=clean.match(/\[[\s\S]*?\]/);
-    if(!m)throw new Error("단어 목록을 찾지 못했어요.\n단어가 잘 보이는 사진으로 다시 시도해주세요.");
-    const list=JSON.parse(m[0]).filter(w=>w.en);
-    if(!list.length)throw new Error("추출된 단어가 없어요.");
+    if(rawWords.length===0){
+      throw new Error("영어 단어를 찾지 못했어요.\n책 페이지가 더 잘 보이도록 가까이 찍어주세요.");
+    }
 
-    W=list;rw();
+    // 3단계: Pollinations로 한국어 뜻 추가
+    upd(85,"🤖 한국어 뜻 붙이는 중...");
+    const wordList=rawWords.join(", ");
+    const prompt=`다음 영어 단어들의 한국어 뜻을 알려줘. JSON만 반환. 마크다운 없이.
+단어: ${wordList}
+형식: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]`;
+
+    let withKorean=[];
+    try{
+      const txt=await pollText(prompt);
+      const clean=txt.replace(/\`\`\`[\w]*/g,"").replace(/\`\`\`/g,"").trim();
+      const m=clean.match(/\[[\s\S]*?\]/);
+      if(m) withKorean=JSON.parse(m[0]).filter(w=>w.en);
+    }catch(_){}
+
+    // 뜻 없으면 영어만
+    if(!withKorean.length){
+      withKorean=rawWords.map(en=>({en,kr:""}));
+    }
+
+    upd(100,"✅ 완료!");
+    W=withKorean;rw();
+
     setTimeout(()=>{
-      setLd(false);
+      document.getElementById("PG").classList.remove("on");
+      document.getElementById("PS").style.display="none";
+      document.getElementById("EB").disabled=false;
       sw("s");
       toast(`✅ ${W.length}개 단어 추출 완료!`);
-    },400);
+    },500);
+
   }catch(e){
-    setLd(false);
-    se("EE",e.message.includes("AI")?
-      "AI 서버가 잠시 바빠요.\n잠깐 기다렸다가 다시 눌러주세요 🙏":e.message);
+    document.getElementById("PG").classList.remove("on");
+    document.getElementById("PS").style.display="none";
+    document.getElementById("EB").disabled=false;
+    se("EE",e.message||"추출 실패. 다시 시도해주세요.");
   }
+}
+
+function upd(pct,msg){
+  document.getElementById("PB").style.width=pct+"%";
+  document.getElementById("PS").textContent=msg;
+}
+
+/* ── OCR 텍스트에서 영어 단어 추출 ── */
+function extractEnglishWords(text){
+  const lines=text.split(/[\n\r]+/);
+  const words=new Set();
+  for(const line of lines){
+    const clean=line.trim();
+    // 2~15자 영어 단어/구
+    const matches=clean.match(/\b[a-zA-Z][a-zA-Z\s\-]{1,20}\b/g)||[];
+    for(const w of matches){
+      const trimmed=w.trim();
+      // 너무 짧거나 일반 불용어 제외
+      if(trimmed.length<2)continue;
+      const lower=trimmed.toLowerCase();
+      const stopwords=new Set(["the","a","an","is","it","in","on","at","to","of","for","and","or","but","not","be","do","go","we","he","she","they","my","his","her","its","our","by","as","up","if"]);
+      if(stopwords.has(lower))continue;
+      words.add(trimmed.toLowerCase());
+    }
+  }
+  return [...words].slice(0,20); // 최대 20개
+}
+
+/* ── Pollinations 텍스트 호출 ── */
+async function pollText(prompt){
+  const models=["openai","openai-large"];
+  for(const model of models){
+    try{
+      const r=await fetch("https://text.pollinations.ai/",{
+        method:"POST",mode:"cors",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({model,messages:[{role:"user",content:prompt}],seed:42,private:true}),
+        signal:AbortSignal.timeout(25000)
+      });
+      if(r.ok){const t=await r.text();if(t&&t.length>10)return t;}
+    }catch(_){}
+  }
+  try{
+    const r=await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt.slice(0,1500))}?model=openai&seed=42`,{mode:"cors",signal:AbortSignal.timeout(25000)});
+    if(r.ok){const t=await r.text();if(t&&t.length>10)return t;}
+  }catch(_){}
+  throw new Error("AI 연결 실패");
 }
 
 /* ── 이야기 생성 ── */
@@ -382,55 +405,44 @@ async function gen(){
   else if(wc==="10"&&W.length>10)uw=W.slice(0,10);
   const wl=uw.map(w=>`${w.en}(${w.kr||""})`).join(", ");
 
-  const prompt=`어린이 이야기 작가야. JSON만 반환. 마크다운·백틱 금지.
+  const prompt=`어린이 이야기 작가야. JSON만 반환해. 마크다운 없이. 백틱 없이.
 아이:${n}/${a}살${g?"/"+g:""}${lk?"/좋아:"+lk:""}
 분위기:${MOOD}/계절:${SEA}/단어:${wl}
-규칙:한국어 8~10문장/기승전결/word(뜻) 형식 필수/${n}이 해결/무섭지 않게
-형식:{"title":"제목","story":"이야기 (word(뜻) 형식 필수)","words":[{"en":"balloon","kr":"풍선","hint":"역할"}],"easy":[{"mission":"balloon(풍선)을 찾아봐!"}],"medium":[{"mission":"trumpet(트럼펫) 든 사람 찾기!"}],"hard":[{"mission":"paintbrush(붓) 옆 물건 말하기!"}],"trophy":"🏆 오늘의 단어왕 ${n}!"}`;
+규칙:한국어 8~10문장/기승전결/단어마다 반드시 word(뜻) 형식 포함/${n}이 해결/무섭지 않게
+정확히 이 형식만:{"title":"제목","story":"이야기","words":[{"en":"balloon","kr":"풍선","hint":"역할"}],"easy":[{"mission":"balloon(풍선)을 찾아봐!"}],"medium":[{"mission":"bucket(양동이) 찾기!"}],"hard":[{"mission":"ball(공) 색깔 말하기!"}],"trophy":"🏆 오늘의 단어왕 ${n}!"}`;
 
-  setLd(true,"이야기를 짓고 있어요 ✍️","15~20초 정도 걸려요!",
-    ["🔍 단어 선별 중...","📖 이야기 작성 중...","🎮 미션 만드는 중..."]);
-  sst(1);
-  const t2=setTimeout(()=>sst(2),5000),t3=setTimeout(()=>sst(3),10000);
+  setLd(true,"이야기를 짓고 있어요 ✍️","15~25초 정도 걸려요",["🔍 단어 선별 중...","📖 이야기 작성 중...","🎮 미션 만드는 중..."]);
+  sst(1);const t2=setTimeout(()=>sst(2),5000),t3=setTimeout(()=>sst(3),12000);
 
   try{
-    const txt=await pollinate([{role:"user",content:prompt}],"이야기생성");
+    const txt=await pollText(prompt);
     clearTimeout(t2);clearTimeout(t3);sst(4);
     const r=parseResp(txt,n);
-    if(!r)throw new Error("응답 형식 오류. 다시 눌러주세요.");
+    if(!r)throw new Error("응답 파싱 실패. 다시 눌러주세요.");
     setTimeout(()=>{setLd(false);rndr(r,n,wc);},300);
   }catch(e){
-    clearTimeout(t2);clearTimeout(t3);
-    setLd(false);
-    se("GE",e.message.includes("AI")?
-      "AI 서버가 잠시 바빠요.\n5초 후 다시 눌러주세요 🙏":e.message);
+    clearTimeout(t2);clearTimeout(t3);setLd(false);
+    se("GE",e.message.includes("실패")||e.message.includes("오류")?e.message:"AI 서버가 바빠요.\n5초 후 다시 눌러주세요 🙏");
   }
 }
 
-/* ── 응답 파싱 (다중 포맷 지원) ── */
-function parseResp(txt, n) {
-  if(!txt) return null;
-  // 1. OpenAI choices 포맷
-  try {
-    const oa=JSON.parse(txt);
-    if(oa.choices?.[0]?.message?.content) txt=oa.choices[0].message.content;
-  } catch(_){}
-  // 2. JSON 추출
-  const clean=txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
+function parseResp(txt,n){
+  if(!txt)return null;
+  try{const oa=JSON.parse(txt);if(oa.choices?.[0]?.message?.content)txt=oa.choices[0].message.content;}catch(_){}
+  const clean=txt.replace(/\`\`\`[\w]*/g,"").replace(/\`\`\`/g,"").trim();
   const m=clean.match(/\{[\s\S]*\}/);
   if(m){
     try{
       const r=JSON.parse(m[0]);
-      if(r.title&&r.story) return r;
-      if(r.content) return {title:r.title||"이야기",story:r.content,words:r.words||[],easy:r.easy||[],medium:r.medium||[],hard:r.hard||[],trophy:r.trophy||"🏆 오늘의 단어왕 "+n+"!"};
+      if(r.title&&r.story)return r;
+      if(r.content)return{title:r.title||"이야기",story:r.content,words:r.words||[],easy:[],medium:[],hard:[],trophy:"🏆 단어왕 "+n+"!"};
     }catch(_){}
   }
-  // 3. 텍스트에서 직접 추출
   const lines=txt.split("\n").map(l=>l.trim()).filter(Boolean);
   if(lines.length>=2){
-    const title=lines[0].replace(/^[#\*"\s]+/,"").replace(/["\*]+$/,"").trim()||"이야기";
+    const title=lines[0].replace(/^[#*"\s]+/,"").replace(/["*]+$/,"").trim();
     const story=lines.slice(1).join("\n");
-    if(story.length>20) return {title,story,words:[],easy:[],medium:[],hard:[],trophy:"🏆 오늘의 단어왕 "+n+"!"};
+    if(story.length>30)return{title:title||"이야기",story,words:[],easy:[],medium:[],hard:[],trophy:"🏆 단어왕 "+n+"!"};
   }
   return null;
 }
@@ -438,11 +450,9 @@ function parseResp(txt, n) {
 function rndr(r,n,wc){
   document.getElementById("RTI").textContent="📖 "+r.title;
   document.getElementById("RME").textContent=`${n} · ${SEA} · ${wc==="all"?"전체":wc+"개"} 단어`;
-  document.getElementById("STX").innerHTML=r.story
-    .replace(/([A-Za-z][A-Za-z\s\-]*?)\(([^)]{1,20})\)/g,(_,en,kr)=>`<mark>${en.trim()}(${kr})</mark>`)
-    .replace(/\n/g,"<br>");
+  document.getElementById("STX").innerHTML=r.story.replace(/([A-Za-z][A-Za-z\s\-]*?)\(([^)]{1,20})\)/g,(_,en,kr)=>`<mark>${en.trim()}(${kr})</mark>`).replace(/\n/g,"<br>");
   const tb=document.getElementById("WB");tb.innerHTML="";
-  (r.words||[]).forEach(w=>{const tr=document.createElement("tr");tr.innerHTML=`<td class="ten">${w.en}</td><td>${w.kr}</td><td style="color:var(--muted);font-size:11px">${w.hint||""}</td>`;tb.appendChild(tr);});
+  (r.words||[]).forEach(w=>{const tr=document.createElement("tr");tr.innerHTML=`<td class="ten">${w.en}</td><td>${w.kr||""}</td><td style="color:var(--muted);font-size:11px">${w.hint||""}</td>`;tb.appendChild(tr);});
   const mel=document.getElementById("MIS");mel.innerHTML="";
   [["easy","🟢 쉬움","눈에 잘 띄어요"],["medium","🟡 보통","자세히 봐야 해요"],["hard","🔴 어려움","위치·옆 물건까지!"]].forEach(([k,lb,dc])=>{
     const its=r[k]||[];if(!its.length)return;
@@ -460,9 +470,9 @@ function rndr(r,n,wc){
 function setLd(on,title,msg,steps){
   document.getElementById("GB").disabled=on;
   document.getElementById("LD").className="ld"+(on?" on":"");
-  if(on&&title){
-    document.getElementById("LT").textContent=title;
-    document.getElementById("LM").textContent=msg||"";
+  if(on){
+    if(title)document.getElementById("LT").textContent=title;
+    if(msg)document.getElementById("LM").textContent=msg;
     if(steps)steps.forEach((s,i)=>{const el=document.getElementById("L"+(i+1));el.textContent=s;el.className="ls";});
   }
   if(!on)document.getElementById("RE").className="res";
@@ -472,7 +482,7 @@ function tc(id){const el=document.getElementById(id),on=!el.classList.contains("
 async function cpR(){try{await navigator.clipboard.writeText(CPT);}catch{const t=document.createElement("textarea");t.value=CPT;document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t);}const btn=document.getElementById("CPB");btn.textContent="✅ 복사됨";btn.classList.add("ok");setTimeout(()=>{btn.textContent="📋 복사";btn.classList.remove("ok");},2000);}
 function rst(){document.getElementById("RE").className="res";window.scrollTo({top:0,behavior:"smooth"});}
 function se(id,m){const el=document.getElementById(id);el.textContent=m;el.className="err"+(m?" on":"");}
-function toast(msg){const t=document.createElement("div");t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+function toast(msg){const t=document.createElement("div");t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
 </script>
 </body>
 </html>
