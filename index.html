@@ -1,680 +1,455 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang='ko'>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>오밀조밀 AI 스토리 생성기</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --coral:#E8654A;--navy:#1B2A3B;--mint:#4FC8A8;
-  --yellow:#F5C842;--gray:#F4F6F8;--border:#E0E5EB;
-  --muted:#7A8B9C;--peach:#FFF0EC;--white:#ffffff
-}
-body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#EEF6FF;color:var(--navy);min-height:100vh}
-
-/* 히어로 */
-.hero{background:linear-gradient(150deg,#1B2A3B 0%,#2d4a7a 100%);padding:28px 20px 32px;text-align:center}
-.hero-badge{display:inline-block;background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.4);color:var(--yellow);font-size:11px;font-weight:700;letter-spacing:.12em;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+:root{--coral:#E8654A;--navy:#1B2A3B;--mint:#4FC8A8;--yellow:#F5C842;--gray:#F4F6F8;--border:#E0E5EB;--muted:#7A8B9C;--peach:#FFF0EC}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#EEF6FF;color:var(--navy);font-size:14px}
+.hero{background:linear-gradient(150deg,#1B2A3B,#2d4a7a);padding:28px 20px 32px;text-align:center}
+.badge{display:inline-block;background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.4);color:var(--yellow);font-size:11px;font-weight:700;letter-spacing:.12em;padding:4px 12px;border-radius:20px;margin-bottom:12px}
 .hero h1{font-size:24px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:8px}
 .hero h1 em{color:var(--yellow);font-style:normal}
 .hero p{font-size:12px;color:rgba(255,255,255,.55);line-height:1.9}
-
-/* 탭 */
 .wrap{max-width:520px;margin:0 auto;padding:0 14px 60px}
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#fff;border-radius:16px;padding:5px;margin-top:14px;box-shadow:0 2px 12px rgba(27,42,59,.08)}
-.tab{padding:11px;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;color:var(--muted);background:transparent}
+.tab{padding:11px;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);background:transparent;transition:all .2s}
 .tab.on{background:var(--navy);color:#fff}
-
-/* 카드 */
 .card{background:#fff;border-radius:18px;padding:18px 16px;margin-top:12px;box-shadow:0 2px 12px rgba(27,42,59,.07)}
-.card-title{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-
-/* 인풋 */
+.ctitle{font-size:13px;font-weight:800;margin-bottom:12px}
 .sub{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;display:block}
-input[type=text],input[type=number],select{
-  width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;
-  font-size:14px;font-family:inherit;color:var(--navy);background:var(--gray);
-  outline:none;-webkit-appearance:none;transition:border .2s
-}
+input[type=text],input[type=number],select{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;font-size:14px;font-family:inherit;color:var(--navy);background:var(--gray);outline:none;-webkit-appearance:none;transition:border .2s}
 input:focus,select:focus{border-color:var(--coral);background:#fff}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-
-/* 계절 */
-.seasons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.sea-btn{border:2px solid var(--border);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;background:var(--gray);font-family:inherit;transition:all .18s}
-.sea-btn.on{border-color:var(--coral);background:var(--peach)}
-.sea-btn .ico{font-size:22px;display:block;margin-bottom:3px}
-.sea-btn .lbl{font-size:11px;font-weight:700;color:var(--muted)}
-.sea-btn.on .lbl{color:var(--coral)}
-
-/* 분위기 */
+.seas{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sb{border:2px solid var(--border);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;background:var(--gray);font-family:inherit;transition:all .18s}
+.sb.on{border-color:var(--coral);background:var(--peach)}
+.sb .ico{font-size:22px;display:block;margin-bottom:3px}
+.sb .lbl{font-size:11px;font-weight:700;color:var(--muted)}
+.sb.on .lbl{color:var(--coral)}
 .moods{display:flex;flex-wrap:wrap;gap:7px}
-.mood-btn{padding:8px 13px;border:2px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--gray);font-family:inherit;color:var(--muted);transition:all .18s}
-.mood-btn.on{border-color:var(--coral);background:var(--peach);color:var(--coral)}
-
-/* 단어 태그 */
-.word-area{background:var(--gray);border:1.5px solid var(--border);border-radius:12px;padding:10px;min-height:60px;display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;margin-bottom:10px}
-.word-tag{display:inline-flex;align-items:center;gap:5px;background:var(--navy);color:#fff;border-radius:999px;padding:5px 12px;font-size:12px;animation:tagIn .15s ease}
-@keyframes tagIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
-.word-tag b{font-weight:700}
-.word-tag .kr{font-size:10px;opacity:.6}
-.word-tag button{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:16px;line-height:1;padding:0;margin-left:1px}
-.add-row{display:flex;gap:7px}
-.add-row input{flex:1;padding:9px 12px}
-.add-btn{padding:9px 16px;background:var(--navy);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
-
-/* 사진 업로드 */
-.photo-box{border:2px dashed var(--border);border-radius:16px;background:var(--gray);margin-bottom:12px;overflow:hidden;transition:all .2s}
-.photo-box.has-img{border-style:solid;border-color:var(--mint)}
-.photo-placeholder{padding:28px 14px;text-align:center}
-.photo-placeholder .big-ico{font-size:44px;margin-bottom:10px}
-.photo-placeholder .ph-title{font-size:14px;font-weight:700;margin-bottom:4px}
-.photo-placeholder .ph-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
-.cam-row{display:flex;gap:8px;justify-content:center}
-.cam-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;position:relative;overflow:hidden}
-.cam-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
-.cam-btn.cam{background:var(--coral);color:#fff}
-.cam-btn.gal{background:var(--navy);color:#fff}
-.photo-preview img{width:100%;max-height:240px;object-fit:cover;display:block}
-.photo-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(79,200,168,.1)}
-.photo-bar span{font-size:12px;font-weight:700;color:#2a8c6e}
-.photo-bar button{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline}
-
-/* 버튼들 */
-.ext-btn{width:100%;padding:13px;background:var(--mint);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
-.ext-btn:disabled{background:#b2d8d0;cursor:not-allowed}
-.main-btn{width:100%;padding:16px;background:var(--coral);color:#fff;border:none;border-radius:15px;font-size:18px;font-weight:900;cursor:pointer;font-family:inherit;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(232,101,74,.3);transition:all .2s}
-.main-btn:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
-
-/* 에러 */
-.err-box{background:#fff0ee;border:1.5px solid #ffb8a8;border-radius:12px;padding:11px 14px;margin-top:10px;font-size:12px;color:#c0392b;line-height:1.7;display:none}
-.err-box.on{display:block}
-
-/* 로딩 */
-.loading{display:none;background:#fff;border-radius:18px;padding:24px 16px;margin-top:14px;text-align:center;box-shadow:0 2px 12px rgba(27,42,59,.07)}
-.loading.on{display:block}
-.spinner{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--coral);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite}
+.mb{padding:8px 13px;border:2px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--gray);font-family:inherit;color:var(--muted);transition:all .18s}
+.mb.on{border-color:var(--coral);background:var(--peach);color:var(--coral)}
+.wa{background:var(--gray);border:1.5px solid var(--border);border-radius:12px;padding:10px;min-height:58px;display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;margin-bottom:10px}
+.tg{display:inline-flex;align-items:center;gap:5px;background:var(--navy);color:#fff;border-radius:999px;padding:5px 12px;font-size:12px;animation:pop .15s ease}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.tg b{font-weight:700}.tg .kr{font-size:10px;opacity:.6}
+.tg button{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:16px;line-height:1}
+.arow{display:flex;gap:7px}
+.arow input{flex:1;padding:9px 12px}
+.abtn{padding:9px 16px;background:var(--navy);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.pbox{border:2px dashed var(--border);border-radius:16px;background:var(--gray);margin-bottom:12px;overflow:hidden;transition:all .2s}
+.pbox.has{border-style:solid;border-color:var(--mint)}
+.pph{padding:28px 14px;text-align:center}
+.pph .ico{font-size:44px;margin-bottom:10px}
+.pph .t{font-size:14px;font-weight:700;margin-bottom:4px}
+.pph .s{font-size:12px;color:var(--muted);margin-bottom:14px}
+.crow{display:flex;gap:8px;justify-content:center}
+.cbtn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;position:relative;overflow:hidden}
+.cbtn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.cbtn.cam{background:var(--coral);color:#fff}
+.cbtn.gal{background:var(--navy);color:#fff}
+.ppv img{width:100%;max-height:240px;object-fit:cover;display:block}
+.pbar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(79,200,168,.1)}
+.pbar span{font-size:12px;font-weight:700;color:#2a8c6e}
+.pbar button{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline}
+.extbtn{width:100%;padding:13px;background:var(--mint);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+.extbtn:disabled{background:#b2d8d0;cursor:not-allowed}
+.mainbtn{width:100%;padding:16px;background:var(--coral);color:#fff;border:none;border-radius:15px;font-size:18px;font-weight:900;cursor:pointer;font-family:inherit;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(232,101,74,.3)}
+.mainbtn:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
+.err{background:#fff0ee;border:1.5px solid #ffb8a8;border-radius:12px;padding:11px 14px;margin-top:10px;font-size:12px;color:#c0392b;line-height:1.7;display:none;white-space:pre-line}
+.err.on{display:block}
+.ld{display:none;background:#fff;border-radius:18px;padding:24px 16px;margin-top:14px;text-align:center;box-shadow:0 2px 12px rgba(27,42,59,.07)}
+.ld.on{display:block}
+.sp{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--coral);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ld-title{font-size:15px;font-weight:700;margin-bottom:4px}
-.ld-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
-.ld-steps{display:flex;flex-direction:column;gap:6px}
-.ld-step{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:10px;font-size:12px;background:var(--gray);color:var(--muted);transition:all .35s}
-.ld-step.active{background:var(--peach);color:var(--coral);font-weight:700}
-.ld-step.done{background:#e6fff5;color:#1a7a56}
-
-/* 결과 */
-.result{display:none;margin-top:14px}
-.result.on{display:block}
-.res-header{background:var(--navy);padding:16px 18px;border-radius:18px 18px 0 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.res-title{font-size:15px;font-weight:800;color:#fff;line-height:1.4}
-.res-meta{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px}
-.copy-btn{padding:8px 14px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
-.copy-btn.ok{background:var(--mint);border-color:var(--mint)}
-.res-body{background:#fff;padding:20px 16px;border-radius:0 0 18px 18px;box-shadow:0 3px 18px rgba(27,42,59,.09)}
-.sec-label{font-size:9px;font-weight:800;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
-.story-text{font-size:15px;line-height:2.3;color:var(--navy);white-space:pre-wrap}
-.story-text mark{background:#FFF3CD;border-radius:4px;padding:1px 5px;font-weight:700;color:#9a6700}
-.word-table{width:100%;border-collapse:collapse;font-size:12px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
-.word-table th{background:var(--navy);color:#fff;padding:9px 12px;text-align:left;font-size:11px;font-weight:700}
-.word-table td{padding:9px 12px;border-bottom:1px solid var(--border);line-height:1.5}
-.word-table tr:last-child td{border-bottom:none}
-.word-table tr:nth-child(even) td{background:var(--gray)}
-.word-en{font-weight:700;color:var(--coral)}
-.mission-group{margin-bottom:14px}
-.mission-label{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.mission-item{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:var(--gray);border-radius:11px;margin-bottom:6px;cursor:pointer}
-.check-box{width:24px;height:24px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px;transition:all .2s;min-width:24px}
-.check-box.checked{background:var(--mint);border-color:var(--mint);color:#fff}
-.mission-text{font-size:13px;line-height:1.6;color:var(--navy)}
-.trophy-box{background:linear-gradient(135deg,var(--yellow),#e09800);border-radius:14px;padding:16px 18px;text-align:center;margin-top:10px}
-.trophy-box p{font-size:14px;font-weight:800;color:var(--navy);line-height:1.6}
-.reset-btn{width:100%;padding:13px;background:var(--gray);color:var(--navy);border:1.5px solid var(--border);border-radius:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px}
-
+.lt{font-size:15px;font-weight:700;margin-bottom:4px}
+.ls{font-size:12px;color:var(--muted);margin-bottom:14px}
+.lsteps{display:flex;flex-direction:column;gap:6px}
+.lstep{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:10px;font-size:12px;background:var(--gray);color:var(--muted);transition:all .35s}
+.lstep.act{background:var(--peach);color:var(--coral);font-weight:700}
+.lstep.done{background:#e6fff5;color:#1a7a56}
+.res{display:none;margin-top:14px}
+.res.on{display:block}
+.rh{background:var(--navy);padding:16px 18px;border-radius:18px 18px 0 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.rt{font-size:15px;font-weight:800;color:#fff;line-height:1.4}
+.rm{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px}
+.cpbtn{padding:8px 14px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.cpbtn.ok{background:var(--mint);border-color:var(--mint)}
+.rb{background:#fff;padding:20px 16px;border-radius:0 0 18px 18px;box-shadow:0 3px 18px rgba(27,42,59,.09)}
+.sl{font-size:9px;font-weight:800;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--border)}
+.stxt{font-size:15px;line-height:2.3;color:var(--navy)}
+.stxt mark{background:#FFF3CD;border-radius:4px;padding:1px 5px;font-weight:700;color:#9a6700}
+.wtbl{width:100%;border-collapse:collapse;font-size:12px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.wtbl th{background:var(--navy);color:#fff;padding:9px 12px;text-align:left;font-size:11px;font-weight:700}
+.wtbl td{padding:9px 12px;border-bottom:1px solid var(--border);line-height:1.5}
+.wtbl tr:last-child td{border-bottom:none}
+.wtbl tr:nth-child(even) td{background:var(--gray)}
+.wen{font-weight:700;color:var(--coral)}
+.mg{margin-bottom:14px}
+.ml{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.mi{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:var(--gray);border-radius:11px;margin-bottom:6px;cursor:pointer}
+.chk{width:24px;height:24px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px;transition:all .2s;min-width:24px}
+.chk.on{background:var(--mint);border-color:var(--mint);color:#fff}
+.mt{font-size:13px;line-height:1.6}
+.trp{background:linear-gradient(135deg,var(--yellow),#e09800);border-radius:14px;padding:16px 18px;text-align:center;margin-top:10px}
+.trp p{font-size:14px;font-weight:800;color:var(--navy);line-height:1.6}
+.rstbtn{width:100%;padding:13px;background:var(--gray);color:var(--navy);border:1.5px solid var(--border);border-radius:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px}
 .footer{text-align:center;padding:28px 0 10px;font-size:12px;color:var(--muted)}
-.footer strong{color:var(--coral)}
 </style>
 </head>
 <body>
-
 <div class="hero">
-  <div class="hero-badge">오밀조밀 마을사전 × AI</div>
+  <div class="badge">오밀조밀 마을사전 × AI</div>
   <h1>사진 한 장으로<br><em>나만의 이야기</em> 완성!</h1>
-  <p>책 페이지 찍기 → 단어 자동 추출 → 아이 맞춤 스토리<br>그림 찾기 게임 미션까지 한 번에!</p>
+  <p>책 페이지 찍기 → 단어 자동 추출 → 아이 맞춤 스토리<br>그림 찾기 미션까지 한 번에!</p>
 </div>
-
 <div class="wrap">
-
   <div class="tabs">
-    <button class="tab on" id="T1" onclick="showTab('story')">✨ 이야기 만들기</button>
-    <button class="tab off" id="T2" onclick="showTab('extract')">📸 단어 추출</button>
+    <button class="tab on" id="T1" onclick="swTab('story')">✨ 이야기 만들기</button>
+    <button class="tab off" id="T2" onclick="swTab('extract')">📸 단어 추출</button>
   </div>
-
-  <!-- ===== 단어 추출 탭 ===== -->
-  <div id="TAB_EXTRACT" style="display:none">
+  <div id="ET" style="display:none">
     <div class="card">
-      <div class="card-title">📸 책 페이지 사진으로 단어 추출</div>
-
-      <div class="photo-box" id="photoBox">
-        <div class="photo-placeholder" id="photoPlaceholder">
-          <div class="big-ico">📖</div>
-          <div class="ph-title">책 페이지를 찍어주세요</div>
-          <div class="ph-sub">단어가 선명하게 보이면 돼요</div>
-          <div class="cam-row">
-            <label class="cam-btn cam">
-              📷 카메라
-              <input type="file" accept="image/*" capture="environment" onchange="onPhoto(event)">
-            </label>
-            <label class="cam-btn gal">
-              🖼️ 갤러리
-              <input type="file" accept="image/*" onchange="onPhoto(event)">
-            </label>
+      <div class="ctitle">📸 책 페이지 → 단어 자동 추출</div>
+      <div class="pbox" id="PB">
+        <div class="pph" id="PPH">
+          <div class="ico">📖</div>
+          <div class="t">책 페이지를 찍어주세요</div>
+          <div class="s">단어가 선명하게 보이면 돼요</div>
+          <div class="crow">
+            <label class="cbtn cam">📷 카메라<input type="file" accept="image/*" capture="environment" onchange="onPhoto(event)"></label>
+            <label class="cbtn gal">🖼️ 갤러리<input type="file" accept="image/*" onchange="onPhoto(event)"></label>
           </div>
         </div>
-        <div class="photo-preview" id="photoPreview" style="display:none">
-          <img id="previewImg" src="" alt="">
-          <div class="photo-bar">
-            <span>✅ 사진 선택 완료</span>
-            <button onclick="resetPhoto()">다시 선택</button>
-          </div>
+        <div class="ppv" id="PPV" style="display:none">
+          <img id="PVI" src="" alt="">
+          <div class="pbar"><span>✅ 사진 선택 완료</span><button onclick="resetPhoto()">다시 선택</button></div>
         </div>
       </div>
-
-      <button class="ext-btn" id="extractBtn" onclick="extractWords()" disabled>
-        🔍 단어 자동 추출하기
-      </button>
-      <div class="err-box" id="extErr"></div>
+      <button class="extbtn" id="EB" onclick="extractWords()" disabled>🔍 단어 자동 추출하기</button>
+      <div class="err" id="EE"></div>
     </div>
   </div>
-
-  <!-- ===== 이야기 만들기 탭 ===== -->
-  <div id="TAB_STORY">
-
-    <!-- 계절 -->
+  <div id="ST">
     <div class="card">
-      <div class="card-title">📅 계절 선택</div>
-      <div class="seasons" id="seasonGrid"></div>
+      <div class="ctitle">📅 계절 선택</div>
+      <div class="seas" id="SG"></div>
     </div>
-
-    <!-- 단어 목록 -->
     <div class="card">
-      <div class="card-title" id="wordTitle">📝 단어 목록</div>
-      <div class="word-area" id="wordArea"></div>
-      <div class="add-row">
-        <input type="text" id="addEn" placeholder="영어 (balloon)" onkeydown="if(event.key==='Enter')addWord()">
-        <input type="text" id="addKr" placeholder="뜻 (풍선)" style="max-width:110px" onkeydown="if(event.key==='Enter')addWord()">
-        <button class="add-btn" onclick="addWord()">추가</button>
+      <div class="ctitle" id="WT">📝 단어 목록</div>
+      <div class="wa" id="WA"></div>
+      <div class="arow">
+        <input type="text" id="EN" placeholder="영어 (balloon)" onkeydown="if(event.key==='Enter')addWord()">
+        <input type="text" id="KR" placeholder="뜻 (풍선)" style="max-width:110px" onkeydown="if(event.key==='Enter')addWord()">
+        <button class="abtn" onclick="addWord()">추가</button>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:6px">💡 엔터로 추가 · 태그의 × 눌러서 삭제</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px">💡 엔터로 추가 · × 눌러서 삭제</p>
     </div>
-
-    <!-- 아이 정보 -->
     <div class="card">
-      <div class="card-title">👶 우리 아이 정보</div>
+      <div class="ctitle">👶 우리 아이 정보</div>
       <div class="r2">
-        <div><span class="sub">이름 *</span><input type="text" id="childName" placeholder="지우" maxlength="10"></div>
-        <div><span class="sub">나이 *</span><input type="number" id="childAge" placeholder="7" min="3" max="13"></div>
+        <div><span class="sub">이름 *</span><input type="text" id="CN" placeholder="지우" maxlength="10"></div>
+        <div><span class="sub">나이 *</span><input type="number" id="CA" placeholder="7" min="3" max="13"></div>
       </div>
       <div class="r2">
-        <div>
-          <span class="sub">성별</span>
-          <select id="childGender">
-            <option value="">선택 안 함</option>
-            <option value="여자">여자아이</option>
-            <option value="남자">남자아이</option>
-          </select>
-        </div>
-        <div>
-          <span class="sub">단어 수</span>
-          <select id="wordCount">
-            <option value="5">5개</option>
-            <option value="10" selected>10개</option>
-            <option value="all">전체</option>
-          </select>
-        </div>
+        <div><span class="sub">성별</span><select id="CG"><option value="">선택 안 함</option><option value="여자">여자아이</option><option value="남자">남자아이</option></select></div>
+        <div><span class="sub">단어 수</span><select id="WC"><option value="5">5개</option><option value="10" selected>10개</option><option value="all">전체</option></select></div>
       </div>
       <span class="sub">좋아하는 것</span>
-      <input type="text" id="childLike" placeholder="공주, 하츄핑, 공룡, 로블록스..." style="margin-bottom:12px">
+      <input type="text" id="CL" placeholder="공주, 하츄핑, 공룡, 로블록스..." style="margin-bottom:12px">
       <span class="sub">원하는 분위기</span>
-      <div class="moods" id="moodGrid"></div>
+      <div class="moods" id="MG"></div>
     </div>
-
-    <div class="err-box" id="genErr"></div>
-    <button class="main-btn" id="genBtn" onclick="generateStory()">✨ 이야기 만들기</button>
+    <div class="err" id="GE"></div>
+    <button class="mainbtn" id="GB" onclick="genStory()">✨ 이야기 만들기</button>
   </div>
-
-  <!-- 로딩 -->
-  <div class="loading" id="loadingBox">
-    <div class="spinner"></div>
-    <div class="ld-title" id="ldTitle">처리 중이에요</div>
-    <div class="ld-sub" id="ldSub">잠깐만요!</div>
-    <div class="ld-steps">
-      <div class="ld-step" id="LS1"></div>
-      <div class="ld-step" id="LS2"></div>
-      <div class="ld-step" id="LS3"></div>
+  <div class="ld" id="LD">
+    <div class="sp"></div>
+    <div class="lt" id="LT">처리 중이에요</div>
+    <div class="ls" id="LS">잠깐만요!</div>
+    <div class="lsteps">
+      <div class="lstep" id="L1"></div>
+      <div class="lstep" id="L2"></div>
+      <div class="lstep" id="L3"></div>
     </div>
   </div>
-
-  <!-- 결과 -->
-  <div class="result" id="resultBox">
-    <div class="res-header">
-      <div>
-        <div class="res-title" id="resTitle"></div>
-        <div class="res-meta" id="resMeta"></div>
-      </div>
-      <button class="copy-btn" id="copyBtn" onclick="copyResult()">📋 복사</button>
+  <div class="res" id="RE">
+    <div class="rh">
+      <div><div class="rt" id="RTIT"></div><div class="rm" id="RMET"></div></div>
+      <button class="cpbtn" id="CPB" onclick="doCopy()">📋 복사</button>
     </div>
-    <div class="res-body">
-      <div class="sec-label">📖 이야기</div>
-      <div class="story-text" id="storyText"></div>
-      <div class="sec-label">📚 오늘 배운 단어</div>
-      <table class="word-table"><thead><tr><th>영어</th><th>한국어</th><th>이야기 속 역할</th></tr></thead><tbody id="wordTableBody"></tbody></table>
-      <div class="sec-label">🎮 그림 찾기 게임</div>
-      <div id="missionsBox"></div>
-      <div class="trophy-box" id="trophyBox"></div>
-      <button class="reset-btn" onclick="resetResult()">🔄 다른 이야기 만들기</button>
+    <div class="rb">
+      <div class="sl">📖 이야기</div>
+      <div class="stxt" id="STX"></div>
+      <div class="sl">📚 오늘 배운 단어</div>
+      <table class="wtbl"><thead><tr><th>영어</th><th>한국어</th><th>이야기 속 역할</th></tr></thead><tbody id="WTB"></tbody></table>
+      <div class="sl">🎮 그림 찾기 게임</div>
+      <div id="MBX"></div>
+      <div class="trp" id="TRP"></div>
+      <button class="rstbtn" onclick="doReset()">🔄 다른 이야기 만들기</button>
     </div>
   </div>
-
-  <div class="footer">Made with ❤️ for <strong>@bookyozef</strong></div>
+  <div class="footer">Made with ❤️ for <strong style="color:var(--coral)">@bookyozef</strong></div>
 </div>
-
 <script>
+const GK=["AQ.Ab8RN6Kzdp70dvL","0Sa9zAqTimZZK3IhrP","tWQjr4PEDNIqxm1gQ"].join("");
+const GAPI="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+GK;
 
-// ── 안전한 JSON 파서 ──
-function safeParseJSON(txt) {
-  if (!txt) return null;
-  // 1. 코드블록 제거
-  let s = txt.replace(/```[\w]*/g, "").replace(/```/g, "").trim();
-  // 2. 줄바꿈을 공백으로 (JSON 문자열 내부 줄바꿈 방지)
-  // 3. 중괄호 블록 찾기
-  const start = s.indexOf("{");
-  const end = s.lastIndexOf("}");
-  if (start === -1 || end === -1) return null;
-  let jsonStr = s.slice(start, end + 1);
-  // 4. 제어문자 제거 (줄바꿈 제외)
-  jsonStr = jsonStr.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
-  // 5. story 필드 내부의 따옴표 이스케이프
-  jsonStr = jsonStr.replace(/"story"\s*:\s*"((?:[^"\\]|\\.)*)"/gs, (match, story) => {
-    const fixed = story.replace(/(?<!\\)"/g, '\\"').replace(/\n/g, "\\n");
-    return `"story":"${fixed}"`;
-  });
-  try {
-    return JSON.parse(jsonStr);
-  } catch(e) {
-    // 6. story 값을 단순 추출해서 재조합
-    try {
-      const titleM = jsonStr.match(/"title"\s*:\s*"([^"]+)"/);
-      const storyM = txt.match(/"story"\s*:\s*"([\s\S]*?)(?=","words"|","easy")/);
-      if (titleM && storyM) {
-        // 나머지 JSON에서 배열들만 추출
-        const wordsM = jsonStr.match(/"words"\s*:\s*(\[[\s\S]*?\])/);
-        const easyM = jsonStr.match(/"easy"\s*:\s*(\[[\s\S]*?\])/);
-        const medM = jsonStr.match(/"medium"\s*:\s*(\[[\s\S]*?\])/);
-        const hardM = jsonStr.match(/"hard"\s*:\s*(\[[\s\S]*?\])/);
-        const trophyM = jsonStr.match(/"trophy"\s*:\s*"([^"]+)"/);
-        return {
-          title: titleM[1],
-          story: storyM[1].replace(/\\n/g,"\n"),
-          words: wordsM ? JSON.parse(wordsM[1]) : [],
-          easy: easyM ? JSON.parse(easyM[1]) : [],
-          medium: medM ? JSON.parse(medM[1]) : [],
-          hard: hardM ? JSON.parse(hardM[1]) : [],
-          trophy: trophyM ? trophyM[1] : "🏆 오늘의 단어왕!"
-        };
-      }
-    } catch(_) {}
-    return null;
-  }
-}
-
-function safeParseArray(txt) {
-  if (!txt) return null;
-  let s = txt.replace(/```[\w]*/g,"").replace(/```/g,"").trim();
-  const start = s.indexOf("[");
-  const end = s.lastIndexOf("]");
-  if (start === -1 || end === -1) return null;
-  let jsonStr = s.slice(start, end+1);
-  jsonStr = jsonStr.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,"");
-  try { return JSON.parse(jsonStr); } catch(_) { return null; }
-}
-
-// ── API 설정 ──
-const GK = ["AQ.Ab8RN6Kzdp70dvL","0Sa9zAqTimZZK3IhrP","tWQjr4PEDNIqxm1gQ"].join("");
-const GAPI = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GK;
-
-// ── 기본 데이터 ──
-const SEASON_WORDS = {
-  봄:[["bouquet","꽃다발"],["butterfly","나비"],["rainbow","무지개"],["kite","연"],["flower","꽃"],["nest","둥지"],["rain","비"],["umbrella","우산"]],
+const SW={
+  봄:[["bouquet","꽃다발"],["butterfly","나비"],["rainbow","무지개"],["kite","연"],["flower","꽃"],["nest","둥지"]],
   여름:[["bouquet","꽃다발"],["balloon","풍선"],["bucket","양동이"],["trumpet","트럼펫"],["ball","공"],["hula hoop","훌라후프"],["present","선물"],["grill","그릴"],["jump rope","줄넘기"],["hand fan","부채"],["paintbrush","붓"],["paints","물감"],["sand mold","모래놀이 틀"],["tennis racket","테니스 라켓"],["toy excavator","장난감 굴착기"]],
-  가을:[["acorn","도토리"],["mushroom","버섯"],["scarecrow","허수아비"],["pumpkin","호박"],["chestnut","밤"],["rake","갈퀴"],["lantern","랜턴"]],
-  겨울:[["snowman","눈사람"],["sled","썰매"],["scarf","목도리"],["mittens","장갑"],["candle","양초"],["wreath","화환"],["fireplace","벽난로"]]
+  가을:[["acorn","도토리"],["mushroom","버섯"],["scarecrow","허수아비"],["pumpkin","호박"],["chestnut","밤"]],
+  겨울:[["snowman","눈사람"],["sled","썰매"],["scarf","목도리"],["mittens","장갑"],["candle","양초"]]
 };
-const MOODS = [["모험","🏃"],["코믹","😂"],["동화","🧚"],["미스터리","🔍"]];
-const SEASONS = [["봄","🌸"],["여름","☀️"],["가을","🍂"],["겨울","❄️"]];
+let words=[],sea="여름",mood="모험",photo=null,copyTxt="";
 
-let words = [], season = "여름", mood = "모험", photo = null, copyText = "";
-
-// ── 초기화 ──
-window.onload = () => {
-  // 계절 버튼
-  const sg = document.getElementById("seasonGrid");
-  SEASONS.forEach(([s,e]) => {
-    const b = document.createElement("button");
-    b.className = "sea-btn" + (s === season ? " on" : "");
-    b.innerHTML = `<span class="ico">${e}</span><span class="lbl">${s}</span>`;
-    b.onclick = () => setSeason(s);
-    sg.appendChild(b);
+window.onload=()=>{
+  const sg=document.getElementById("SG");
+  [["봄","🌸"],["여름","☀️"],["가을","🍂"],["겨울","❄️"]].forEach(([s,e])=>{
+    const b=document.createElement("button");
+    b.className="sb"+(s===sea?" on":"");
+    b.innerHTML='<span class="ico">'+e+'</span><span class="lbl">'+s+'</span>';
+    b.onclick=()=>setSea(s);sg.appendChild(b);
   });
-  // 분위기 버튼
-  const mg = document.getElementById("moodGrid");
-  MOODS.forEach(([m,e]) => {
-    const b = document.createElement("button");
-    b.className = "mood-btn" + (m === mood ? " on" : "");
-    b.textContent = e + " " + m;
-    b.onclick = () => setMood(m, b);
-    mg.appendChild(b);
+  const mg=document.getElementById("MG");
+  [["모험","🏃"],["코믹","😂"],["동화","🧚"],["미스터리","🔍"]].forEach(([m,e])=>{
+    const b=document.createElement("button");
+    b.className="mb"+(m===mood?" on":"");
+    b.textContent=e+" "+m;b.onclick=()=>setMood(m,b);mg.appendChild(b);
   });
-  loadSeasonWords(season);
+  loadWords(sea);
 };
 
-function showTab(t) {
-  document.getElementById("TAB_STORY").style.display = t === "story" ? "block" : "none";
-  document.getElementById("TAB_EXTRACT").style.display = t === "extract" ? "block" : "none";
-  document.getElementById("T1").className = "tab " + (t === "story" ? "on" : "off");
-  document.getElementById("T2").className = "tab " + (t === "extract" ? "on" : "off");
+function swTab(t){
+  document.getElementById("ST").style.display=t==="story"?"block":"none";
+  document.getElementById("ET").style.display=t==="extract"?"block":"none";
+  document.getElementById("T1").className="tab "+(t==="story"?"on":"off");
+  document.getElementById("T2").className="tab "+(t==="extract"?"on":"off");
 }
+function setSea(s){
+  sea=s;
+  document.querySelectorAll(".sb").forEach((b,i)=>b.className="sb"+(["봄","여름","가을","겨울"][i]===s?" on":""));
+  loadWords(s);
+}
+function setMood(m,btn){mood=m;document.querySelectorAll(".mb").forEach(b=>b.className="mb"+(b===btn?" on":""));}
+function loadWords(s){words=(SW[s]||[]).map(([en,kr])=>({en,kr}));renderWords();}
+function renderWords(){
+  const a=document.getElementById("WA");a.innerHTML="";
+  if(!words.length){a.innerHTML='<span style="color:var(--muted);font-size:12px">계절 선택 또는 직접 추가</span>';return;}
+  words.forEach((w,i)=>{
+    const t=document.createElement("div");t.className="tg";
+    t.innerHTML='<b>'+w.en+'</b>'+(w.kr?'<span class="kr">'+w.kr+'</span>':'')+'<button onclick="rmWord('+i+')">×</button>';
+    a.appendChild(t);
+  });
+  document.getElementById("WT").textContent="📝 단어 목록 ("+words.length+"개)";
+}
+function addWord(){
+  const en=document.getElementById("EN").value.trim(),kr=document.getElementById("KR").value.trim();
+  if(!en)return;words.push({en,kr});
+  document.getElementById("EN").value="";document.getElementById("KR").value="";renderWords();
+}
+function rmWord(i){words.splice(i,1);renderWords();}
 
-function setSeason(s) {
-  season = s;
-  document.querySelectorAll(".sea-btn").forEach((b,i) => b.className = "sea-btn" + (SEASONS[i][0] === s ? " on" : ""));
-  loadSeasonWords(s);
+async function onPhoto(e){
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+    photo=await compImg(file,1024);
+    document.getElementById("PPH").style.display="none";
+    document.getElementById("PPV").style.display="block";
+    document.getElementById("PVI").src=photo.url;
+    document.getElementById("PB").classList.add("has");
+    document.getElementById("EB").disabled=false;
+    setErr("EE","");
+  }catch{setErr("EE","이미지 로드 실패.");}
 }
-function setMood(m, btn) {
-  mood = m;
-  document.querySelectorAll(".mood-btn").forEach(b => b.className = "mood-btn" + (b === btn ? " on" : ""));
+function resetPhoto(){
+  photo=null;
+  document.getElementById("PPH").style.display="block";
+  document.getElementById("PPV").style.display="none";
+  document.getElementById("PB").classList.remove("has");
+  document.getElementById("EB").disabled=true;
 }
-function loadSeasonWords(s) {
-  words = (SEASON_WORDS[s] || []).map(([en,kr]) => ({en,kr}));
-  renderWords();
-}
-
-// ── 단어 렌더링 ──
-function renderWords() {
-  const area = document.getElementById("wordArea");
-  area.innerHTML = "";
-  if (!words.length) {
-    area.innerHTML = '<span style="color:var(--muted);font-size:12px">단어를 추가하거나 계절을 선택하세요</span>';
-  } else {
-    words.forEach((w, i) => {
-      const tag = document.createElement("div");
-      tag.className = "word-tag";
-      tag.innerHTML = `<b>${w.en}</b>${w.kr ? `<span class="kr">${w.kr}</span>` : ""}<button onclick="removeWord(${i})">×</button>`;
-      area.appendChild(tag);
-    });
-  }
-  document.getElementById("wordTitle").textContent = `📝 단어 목록${words.length ? " (" + words.length + "개)" : ""}`;
-}
-function addWord() {
-  const en = document.getElementById("addEn").value.trim();
-  const kr = document.getElementById("addKr").value.trim();
-  if (!en) return;
-  words.push({en, kr});
-  document.getElementById("addEn").value = "";
-  document.getElementById("addKr").value = "";
-  renderWords();
-}
-function removeWord(i) { words.splice(i, 1); renderWords(); }
-
-// ── 사진 처리 ──
-async function onPhoto(e) {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  try {
-    photo = await compressImage(file, 1024);
-    document.getElementById("photoPlaceholder").style.display = "none";
-    document.getElementById("photoPreview").style.display = "block";
-    document.getElementById("previewImg").src = photo.dataUrl;
-    document.getElementById("photoBox").classList.add("has-img");
-    document.getElementById("extractBtn").disabled = false;
-    setErr("extErr", "");
-  } catch { setErr("extErr", "이미지 로드 실패. 다시 시도해주세요."); }
-}
-function resetPhoto() {
-  photo = null;
-  document.getElementById("photoPlaceholder").style.display = "block";
-  document.getElementById("photoPreview").style.display = "none";
-  document.getElementById("photoBox").classList.remove("has-img");
-  document.getElementById("extractBtn").disabled = true;
-}
-async function compressImage(file, maxPx) {
-  return new Promise((res, rej) => {
-    const img = new Image(), url = URL.createObjectURL(file);
-    img.onload = () => {
+async function compImg(file,max){
+  return new Promise((res,rej)=>{
+    const img=new Image(),url=URL.createObjectURL(file);
+    img.onload=()=>{
       URL.revokeObjectURL(url);
-      const sc = Math.min(1, maxPx / Math.max(img.width, img.height));
-      const w = Math.round(img.width * sc), h = Math.round(img.height * sc);
-      const c = document.createElement("canvas"); c.width = w; c.height = h;
-      c.getContext("2d").drawImage(img, 0, 0, w, h);
-      const dataUrl = c.toDataURL("image/jpeg", 0.88);
-      res({ b64: dataUrl.split(",")[1], dataUrl });
-    };
-    img.onerror = rej; img.src = url;
+      const sc=Math.min(1,max/Math.max(img.width,img.height));
+      const w=Math.round(img.width*sc),h=Math.round(img.height*sc);
+      const c=document.createElement("canvas");c.width=w;c.height=h;
+      c.getContext("2d").drawImage(img,0,0,w,h);
+      const u=c.toDataURL("image/jpeg",.88);
+      res({b64:u.split(",")[1],url:u});
+    };img.onerror=rej;img.src=url;
   });
 }
 
-// ── Gemini API 호출 ──
-async function callGemini(parts) {
-  const res = await fetch(GAPI, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts }],
-      generationConfig: { temperature: 0.8, maxOutputTokens: 2048 }
-    }),
-    signal: AbortSignal.timeout(45000)
+async function callGemini(parts){
+  const r=await fetch(GAPI,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0.8,maxOutputTokens:2048}}),
+    signal:AbortSignal.timeout(45000)
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || "API 오류 " + res.status);
-  }
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||"API 오류 "+r.status);}
+  const d=await r.json();
+  return d.candidates?.[0]?.content?.parts?.[0]?.text||"";
 }
 
-// ── 단어 추출 ──
-async function extractWords() {
-  if (!photo) return;
-  setErr("extErr", "");
-  showLoading(true, "단어를 읽고 있어요 🔍", "AI가 사진을 분석 중이에요",
-    ["📷 이미지 분석 중...", "🔤 단어 인식 중...", "📋 한국어 뜻 정리 중..."]);
-  setStep(1);
-  document.getElementById("extractBtn").disabled = true;
-
-  try {
-    setTimeout(() => setStep(2), 2500);
-    const txt = await callGemini([
-      { inline_data: { mime_type: "image/jpeg", data: photo.b64 } },
-      { text: `이 사진은 어린이 영어 그림 단어장 페이지야.
-페이지에 보이는 영어 단어(사물/명사)와 한국어 뜻을 모두 추출해줘.
-JSON 배열만 반환해. 다른 설명이나 마크다운 없이.
-형식: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]` }
+async function extractWords(){
+  if(!photo)return;
+  setErr("EE","");
+  setLd(true,"단어를 읽고 있어요 🔍","AI가 사진을 분석 중이에요",
+    ["📷 이미지 분석 중...","🔤 단어 인식 중...","📋 한국어 뜻 정리 중..."]);
+  setStep(1);document.getElementById("EB").disabled=true;
+  try{
+    setTimeout(()=>setStep(2),2000);
+    const txt=await callGemini([
+      {inline_data:{mime_type:"image/jpeg",data:photo.b64}},
+      {text:"어린이 영어 그림 단어장 페이지야. 보이는 영어 단어와 한국어 뜻을 아래 형식으로만 반환해. 다른 말 금지.\nballoon=풍선\nbucket=양동이"}
     ]);
     setStep(3);
-
-    const list = safeParseArray(txt);
-    if (!list || !list.length) throw new Error("단어 목록을 찾지 못했어요.\n책 페이지가 선명하게 보이게 다시 찍어주세요.");
-    const filtered = list.filter(w => w.en && w.kr);
-    if (!filtered.length) throw new Error("추출된 단어가 없어요. 다시 시도해주세요.");
-    const list2 = filtered;
-
-    words = list2;
-    renderWords();
-    setTimeout(() => {
-      showLoading(false);
-      showTab("story");
-      document.getElementById("extractBtn").disabled = false;
-      toast("✅ " + words.length + "개 단어 추출 완료!");
-    }, 400);
-
-  } catch(e) {
-    showLoading(false);
-    document.getElementById("extractBtn").disabled = false;
-    setErr("extErr", e.message);
+    const list=[];
+    txt.split("\n").forEach(line=>{
+      const l=line.trim();
+      if(!l||l.startsWith("#")||l.startsWith("*")||l.startsWith("-"))return;
+      const idx=l.indexOf("=");
+      if(idx>0){
+        const en=l.slice(0,idx).trim().toLowerCase().replace(/[^a-z\s\-]/g,"");
+        const kr=l.slice(idx+1).trim().replace(/[`*#]/g,"");
+        if(en&&kr&&en.length>0&&en.length<30)list.push({en,kr});
+      }
+    });
+    if(!list.length)throw new Error("단어를 찾지 못했어요.\n사진을 더 밝고 가까이 찍어보세요.");
+    words=list;renderWords();
+    setTimeout(()=>{
+      setLd(false);swTab("story");
+      document.getElementById("EB").disabled=false;
+      toast("✅ "+words.length+"개 단어 추출 완료!");
+    },300);
+  }catch(e){
+    setLd(false);document.getElementById("EB").disabled=false;setErr("EE",e.message);
   }
 }
 
-// ── 이야기 생성 ──
-async function generateStory() {
-  if (!words.length) { setErr("genErr", "단어를 최소 1개 추가해주세요!"); return; }
-  setErr("genErr", "");
+async function genStory(){
+  if(!words.length){setErr("GE","단어를 최소 1개 추가해주세요!");return;}
+  setErr("GE","");
+  const n=document.getElementById("CN").value.trim()||"우리 아이";
+  const a=document.getElementById("CA").value.trim()||"7";
+  const g=document.getElementById("CG").value;
+  const lk=document.getElementById("CL").value.trim();
+  const wc=document.getElementById("WC").value;
+  let uw=[...words];
+  if(wc==="5"&&words.length>5)uw=words.slice(0,5);
+  else if(wc==="10"&&words.length>10)uw=words.slice(0,10);
+  const wl=uw.map(w=>w.en+"("+w.kr+")").join(", ");
 
-  const name = document.getElementById("childName").value.trim() || "우리 아이";
-  const age = document.getElementById("childAge").value.trim() || "7";
-  const gender = document.getElementById("childGender").value;
-  const like = document.getElementById("childLike").value.trim();
-  const wc = document.getElementById("wordCount").value;
+  const prompt="최고의 어린이 이야기 작가야.\n"
+    +"아이: "+n+" / "+a+"살"+(g?" / "+g:"")+(lk?" / 좋아하는것: "+lk:"")+"\n"
+    +"계절: "+sea+" / 분위기: "+mood+" / 단어: "+wl+"\n\n"
+    +"아래 형식으로 정확하게 작성. 각 ===구분선=== 반드시 포함.\n\n"
+    +"===TITLE===\n이야기 제목\n"
+    +"===STORY===\n8~10문장. 각 단어는 단어(뜻) 형식. "+n+"이 해결. 무섭지 않게.\n"
+    +"===WORDS===\n영어단어|한국어|역할 (한 줄씩)\n"
+    +"===EASY===\n쉬운 미션 3개 (한 줄씩)\n"
+    +"===MEDIUM===\n보통 미션 3개 (한 줄씩)\n"
+    +"===HARD===\n어려운 미션 3개 (한 줄씩)\n"
+    +"===TROPHY===\n트로피 문구 (이모지 포함)";
 
-  let useWords = [...words];
-  if (wc === "5" && words.length > 5) useWords = words.slice(0, 5);
-  else if (wc === "10" && words.length > 10) useWords = words.slice(0, 10);
-  const wordList = useWords.map(w => `${w.en}(${w.kr})`).join(", ");
-
-  const prompt = `최고의 어린이 이야기 작가야. JSON만 반환. 마크다운 없이. 백틱 없이.
-
-[아이 정보]
-이름: ${name} / 나이: ${age}살${gender ? " / " + gender : ""}${like ? " / 좋아하는 것: " + like : ""}
-
-[이야기 설정]
-계절: ${season} / 분위기: ${mood} / 사용할 단어: ${wordList}
-
-[작성 규칙]
-- 한국어로 8~10문장
-- 기승전결 구조
-- 각 단어를 이야기에 자연스럽게 포함시키고 반드시 word(뜻) 형식으로 표기
-- ${name}이(가) 스스로 문제를 해결하는 내용
-- 무섭거나 슬프지 않게
-- 생동감 있고 재미있게
-
-[출력 형식 - 반드시 이 JSON만]
-{"title":"이야기 제목","story":"8~10문장을 한 줄로 이어서 작성. 줄바꿈 없이. 각 단어 word(뜻) 형식 필수.","words":[{"en":"balloon","kr":"풍선","hint":"이야기에서 한 역할"}],"easy":[{"mission":"balloon(풍선)을 그림에서 찾아봐!"}],"medium":[{"mission":"bucket(양동이)을 들고 있는 사람은 누구?"}],"hard":[{"mission":"paintbrush(붓) 바로 옆에 있는 물건은?"}],"trophy":"🏆 오늘의 단어왕 ${name}! 모든 단어를 완벽하게 익혔어요!"}`;
-
-  showLoading(true, "이야기를 짓고 있어요 ✍️", "10~20초 정도 걸려요!",
-    ["🔍 단어 선별 중...", "📖 이야기 작성 중...", "🎮 미션 만드는 중..."]);
+  setLd(true,"이야기를 짓고 있어요 ✍️","10~20초 정도 걸려요!",
+    ["🔍 단어 선별 중...","📖 이야기 작성 중...","🎮 미션 만드는 중..."]);
   setStep(1);
-  const t2 = setTimeout(() => setStep(2), 5000);
-  const t3 = setTimeout(() => setStep(3), 11000);
-
-  try {
-    const txt = await callGemini([{ text: prompt }]);
-    clearTimeout(t2); clearTimeout(t3); setStep(4);
-
-    const r = safeParseJSON(txt);
-    if (!r || !r.title || !r.story) throw new Error("응답 파싱 실패. 다시 눌러주세요.");
-
-    setTimeout(() => { showLoading(false); renderResult(r, name, season, wc); }, 300);
-
-  } catch(e) {
-    clearTimeout(t2); clearTimeout(t3);
-    showLoading(false);
-    setErr("genErr", e.message);
+  const t2=setTimeout(()=>setStep(2),5000),t3=setTimeout(()=>setStep(3),11000);
+  try{
+    const txt=await callGemini([{text:prompt}]);
+    clearTimeout(t2);clearTimeout(t3);setStep(4);
+    const r=parseSections(txt);
+    if(!r.title||!r.story)throw new Error("응답 파싱 실패. 다시 눌러주세요.");
+    setTimeout(()=>{setLd(false);renderResult(r,n,wc);},300);
+  }catch(e){
+    clearTimeout(t2);clearTimeout(t3);setLd(false);setErr("GE",e.message);
   }
 }
 
-// ── 결과 렌더링 ──
-function renderResult(r, name, sea, wc) {
-  document.getElementById("resTitle").textContent = "📖 " + r.title;
-  document.getElementById("resMeta").textContent = `${name} · ${sea} · ${wc === "all" ? "전체" : wc + "개"} 단어`;
+function parseSections(txt){
+  function get(key){
+    const re=new RegExp("==="+key+"===\\s*([\\s\\S]*?)(?====\\w|$)","i");
+    const m=txt.match(re);return m?m[1].trim():"";
+  }
+  const title=get("TITLE");
+  const story=get("STORY");
+  const wordsRaw=get("WORDS");
+  const easyRaw=get("EASY");
+  const medRaw=get("MEDIUM");
+  const hardRaw=get("HARD");
+  const trophy=get("TROPHY");
+  const pw=r=>r.split("\n").map(l=>l.trim()).filter(l=>l.includes("|")).map(l=>{
+    const p=l.split("|");return{en:(p[0]||"").trim(),kr:(p[1]||"").trim(),hint:(p[2]||"").trim()};
+  }).filter(w=>w.en&&w.kr);
+  const pm=r=>r.split("\n").map(l=>l.trim().replace(/^[-*•\d.]+\s*/,"")).filter(l=>l.length>2);
+  return{title,story,words:pw(wordsRaw),easy:pm(easyRaw),medium:pm(medRaw),hard:pm(hardRaw),trophy};
+}
 
-  // 이야기 (단어 하이라이트)
-  const storyHtml = r.story
-    .replace(/([A-Za-z][A-Za-z\s\-]*?)\(([^)]{1,25})\)/g, (_, en, kr) => `<mark>${en.trim()}(${kr})</mark>`)
-    .replace(/\n/g, "<br>");
-  document.getElementById("storyText").innerHTML = storyHtml;
-
-  // 단어표
-  const tb = document.getElementById("wordTableBody"); tb.innerHTML = "";
-  (r.words || []).forEach(w => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td class="word-en">${w.en}</td><td>${w.kr}</td><td style="color:var(--muted);font-size:11px">${w.hint || ""}</td>`;
+function renderResult(r,n,wc){
+  document.getElementById("RTIT").textContent="📖 "+r.title;
+  document.getElementById("RMET").textContent=n+" · "+sea+" · "+(wc==="all"?"전체":wc+"개")+" 단어";
+  document.getElementById("STX").innerHTML=r.story
+    .replace(/([A-Za-z][A-Za-z\s\-]*?)\(([^)]{1,25})\)/g,(_,en,kr)=>"<mark>"+en.trim()+"("+kr+")</mark>")
+    .replace(/\n/g,"<br>");
+  const tb=document.getElementById("WTB");tb.innerHTML="";
+  r.words.forEach(w=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML='<td class="wen">'+w.en+'</td><td>'+w.kr+'</td><td style="color:var(--muted);font-size:11px">'+w.hint+'</td>';
     tb.appendChild(tr);
   });
-
-  // 미션
-  const mb = document.getElementById("missionsBox"); mb.innerHTML = "";
-  [["easy","🟢 쉬움","눈에 잘 띄어요"],["medium","🟡 보통","잘 봐야 해요"],["hard","🔴 어려움","위치·색·옆 물건까지!"]].forEach(([k, lb, dc]) => {
-    const items = r[k] || []; if (!items.length) return;
-    const g = document.createElement("div"); g.className = "mission-group";
-    g.innerHTML = `<div class="mission-label">${lb} <span style="font-weight:400;color:var(--muted);font-size:11px">— ${dc}</span></div>`;
-    items.forEach((item, i) => {
-      const id = `chk_${k}_${i}`, div = document.createElement("div");
-      div.className = "mission-item"; div.onclick = () => toggleCheck(id);
-      div.innerHTML = `<div class="check-box" id="${id}"></div><div class="mission-text">${item.mission.replace(/^□\s*/, "")}</div>`;
-      g.appendChild(div);
+  const mb=document.getElementById("MBX");mb.innerHTML="";
+  [["easy","🟢 쉬움","눈에 잘 띄어요"],["medium","🟡 보통","잘 봐야 해요"],["hard","🔴 어려움","위치·옆 물건까지!"]].forEach(([k,lb,dc])=>{
+    const its=r[k]||[];if(!its.length)return;
+    const g=document.createElement("div");g.className="mg";
+    g.innerHTML='<div class="ml">'+lb+' <span style="font-weight:400;color:var(--muted);font-size:11px">— '+dc+'</span></div>';
+    its.forEach((m,i)=>{
+      const id="c"+k+i,d=document.createElement("div");d.className="mi";
+      d.onclick=()=>togChk(id);
+      d.innerHTML='<div class="chk" id="'+id+'"></div><div class="mt">'+m+'</div>';
+      g.appendChild(d);
     });
     mb.appendChild(g);
   });
-
-  // 트로피
-  document.getElementById("trophyBox").innerHTML = `<p>${r.trophy || "🏆 오늘의 단어왕!"}</p>`;
-
-  // 복사용 텍스트
-  copyText = `📖 ${r.title}\n\n${r.story}\n\n🌟 오늘 배운 단어\n${(r.words||[]).map(w=>`${w.en} = ${w.kr}`).join("\n")}\n\n${r.trophy||""}`;
-
-  document.getElementById("resultBox").className = "result on";
-  document.getElementById("resultBox").scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("TRP").innerHTML="<p>"+(r.trophy||"🏆 오늘의 단어왕 "+n+"!")+"</p>";
+  copyTxt="📖 "+r.title+"\n\n"+r.story+"\n\n🌟 오늘 배운 단어\n"+r.words.map(w=>w.en+" = "+w.kr).join("\n")+"\n\n"+(r.trophy||"");
+  document.getElementById("RE").className="res on";
+  document.getElementById("RE").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-function toggleCheck(id) {
-  const el = document.getElementById(id);
-  const on = !el.classList.contains("checked");
-  el.className = "check-box" + (on ? " checked" : "");
-  el.textContent = on ? "✓" : "";
+function togChk(id){const el=document.getElementById(id),on=!el.classList.contains("on");el.className="chk"+(on?" on":"");el.textContent=on?"✓":"";}
+async function doCopy(){
+  try{await navigator.clipboard.writeText(copyTxt);}
+  catch{const t=document.createElement("textarea");t.value=copyTxt;document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t);}
+  const b=document.getElementById("CPB");b.textContent="✅ 복사됨";b.classList.add("ok");
+  setTimeout(()=>{b.textContent="📋 복사";b.classList.remove("ok");},2000);
 }
-
-async function copyResult() {
-  try { await navigator.clipboard.writeText(copyText); }
-  catch { const t=document.createElement("textarea");t.value=copyText;document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t); }
-  const btn = document.getElementById("copyBtn");
-  btn.textContent = "✅ 복사됨"; btn.classList.add("ok");
-  setTimeout(() => { btn.textContent = "📋 복사"; btn.classList.remove("ok"); }, 2000);
-}
-
-function resetResult() {
-  document.getElementById("resultBox").className = "result";
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// ── 유틸 ──
-function showLoading(on, title, sub, steps) {
-  document.getElementById("genBtn").disabled = on;
-  document.getElementById("loadingBox").className = "loading" + (on ? " on" : "");
-  if (on) {
-    if (title) document.getElementById("ldTitle").textContent = title;
-    if (sub) document.getElementById("ldSub").textContent = sub;
-    if (steps) steps.forEach((s, i) => {
-      const el = document.getElementById("LS" + (i+1));
-      el.textContent = s; el.className = "ld-step";
-    });
+function doReset(){document.getElementById("RE").className="res";window.scrollTo({top:0,behavior:"smooth"});}
+function setLd(on,t,s,steps){
+  document.getElementById("GB").disabled=on;
+  document.getElementById("LD").className="ld"+(on?" on":"");
+  if(on){
+    if(t)document.getElementById("LT").textContent=t;
+    if(s)document.getElementById("LS").textContent=s;
+    if(steps)steps.forEach((st,i)=>{const el=document.getElementById("L"+(i+1));el.textContent=st;el.className="lstep";});
   }
-  if (!on) document.getElementById("resultBox").className = "result";
+  if(!on)document.getElementById("RE").className="res";
 }
-function setStep(n) {
-  [1,2,3].forEach(i => {
-    const el = document.getElementById("LS" + i);
-    if (el.textContent) el.className = "ld-step" + (i < n ? " done" : i === n ? " active" : "");
-  });
-}
-function setErr(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg; el.className = "err-box" + (msg ? " on" : "");
-}
-function toast(msg) {
-  const t = document.createElement("div");
-  t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)";
-  t.textContent = msg; document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+function setStep(n){[1,2,3].forEach(i=>{const el=document.getElementById("L"+i);if(el.textContent)el.className="lstep"+(i<n?" done":i===n?" act":"");});}
+function setErr(id,m){const el=document.getElementById(id);el.textContent=m;el.className="err"+(m?" on":"");}
+function toast(m){
+  const t=document.createElement("div");
+  t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)";
+  t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
 }
 </script>
 </body>
