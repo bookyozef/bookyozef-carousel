@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>오밀조밀 AI 스토리</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--coral:#E8654A;--navy:#1B2A3B;--mint:#4FC8A8;--yellow:#F5C842;--gray:#F4F6F8;--border:#E0E5EB;--muted:#7A8B9C;--peach:#FFF0EC}
@@ -217,6 +216,8 @@ tr:nth-child(even) td{background:var(--gray)}
 </div>
 
 <script>
+const GKEY=["AQ.Ab8RN6JH08eP","EcoUh2raMr8vjGO","wxq8ZMgYVFlrw1Xl4wMsC0g"].join("");
+const GURL="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+GKEY;
 const SW={
   봄:[["bouquet","꽃다발"],["butterfly","나비"],["rainbow","무지개"],["kite","연"],["flower","꽃"],["nest","둥지"]],
   여름:[["bouquet","꽃다발"],["balloon","풍선"],["bucket","양동이"],["trumpet","트럼펫"],["ball","공"],["hula hoop","훌라후프"],["present","선물"],["grill","그릴"],["jump rope","줄넘기"],["hand fan","부채"],["paintbrush","붓"],["paints","물감"],["sand mold","모래놀이 틀"],["tennis racket","테니스 라켓"],["toy excavator","장난감 굴착기"]],
@@ -272,76 +273,49 @@ function rmImg(){
   document.getElementById("EB").disabled=true;
 }
 
-/* ── OCR 단어 추출 ── */
+/* ── Gemini 단어 추출 ── */
 async function exw(){
   if(!IMG)return;
   se("EE","");
+  setLd(true,"단어를 읽고 있어요 🔍","사진에서 영어 단어 추출 중...",
+    ["📷 이미지 분석 중...","🔤 단어 인식 중...","📋 한국어 뜻 붙이는 중..."]);
+  sst(1);
   document.getElementById("EB").disabled=true;
-  document.getElementById("PG").classList.add("on");
-  document.getElementById("PS").style.display="block";
-
   try{
-    // 1단계: Tesseract OCR
-    upd(10,"📷 이미지 분석 준비 중...");
-    const worker=await Tesseract.createWorker("eng",1,{
-      logger: m=>{
-        if(m.status==="recognizing text"){
-          const p=Math.round(m.progress*70)+10;
-          upd(p,"🔤 글자 인식 중... "+Math.round(m.progress*100)+"%");
-        }
-      }
-    });
-    upd(15,"🔤 영어 단어 읽는 중...");
-    const {data:{text}}=await worker.recognize(IMG.file);
-    await worker.terminate();
-    upd(80,"📋 단어 정리 중...");
-
-    // 2단계: OCR 결과에서 영어 단어 추출
-    const rawWords=extractEnglishWords(text);
-    console.log("OCR 원문:", text);
-    console.log("추출 단어:", rawWords);
-
-    if(rawWords.length===0){
-      throw new Error("영어 단어를 찾지 못했어요.\n책 페이지가 더 잘 보이도록 가까이 찍어주세요.");
-    }
-
-    // 3단계: Pollinations로 한국어 뜻 추가
-    upd(85,"🤖 한국어 뜻 붙이는 중...");
-    const wordList=rawWords.join(", ");
-    const prompt=`다음 영어 단어들의 한국어 뜻을 알려줘. JSON만 반환. 마크다운 없이.
-단어: ${wordList}
-형식: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]`;
-
-    let withKorean=[];
-    try{
-      const txt=await pollText(prompt);
-      const clean=txt.replace(/\`\`\`[\w]*/g,"").replace(/\`\`\`/g,"").trim();
-      const m=clean.match(/\[[\s\S]*?\]/);
-      if(m) withKorean=JSON.parse(m[0]).filter(w=>w.en);
-    }catch(_){}
-
-    // 뜻 없으면 영어만
-    if(!withKorean.length){
-      withKorean=rawWords.map(en=>({en,kr:""}));
-    }
-
-    upd(100,"✅ 완료!");
-    W=withKorean;rw();
-
-    setTimeout(()=>{
-      document.getElementById("PG").classList.remove("on");
-      document.getElementById("PS").style.display="none";
-      document.getElementById("EB").disabled=false;
-      sw("s");
-      toast(`✅ ${W.length}개 단어 추출 완료!`);
-    },500);
-
+    setTimeout(()=>sst(2),2000);
+    const txt=await gemini([
+      {inline_data:{mime_type:"image/jpeg",data:IMG.b64}},
+      {text:`이 사진은 어린이 영어 그림 단어장 페이지야.
+페이지에 있는 모든 영어 단어와 한국어 뜻을 추출해줘.
+반드시 JSON 배열만 반환해. 설명 없이.
+형식: [{"en":"balloon","kr":"풍선"},{"en":"bucket","kr":"양동이"}]`}
+    ]);
+    sst(3);
+    const clean=txt.replace(/\`\`\`[\w]*/g,"").replace(/\`\`\`/g,"").trim();
+    const m=clean.match(/\[[\s\S]*?\]/);
+    if(!m) throw new Error("단어 목록을 찾지 못했어요.\n책 페이지가 잘 보이게 다시 찍어주세요.");
+    const list=JSON.parse(m[0]).filter(w=>w.en&&w.kr);
+    if(!list.length) throw new Error("추출된 단어가 없어요. 다시 시도해주세요.");
+    W=list;rw();
+    setTimeout(()=>{setLd(false);sw("s");toast("✅ "+W.length+"개 단어 추출 완료!");document.getElementById("EB").disabled=false;},300);
   }catch(e){
-    document.getElementById("PG").classList.remove("on");
-    document.getElementById("PS").style.display="none";
+    setLd(false);
     document.getElementById("EB").disabled=false;
-    se("EE",e.message||"추출 실패. 다시 시도해주세요.");
+    se("EE",e.message);
   }
+}
+
+/* ── Gemini API ── */
+async function gemini(parts){
+  const r=await fetch(GURL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0.7,maxOutputTokens:2000}}),
+    signal:AbortSignal.timeout(40000)
+  });
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||"API 오류 "+r.status);}
+  const d=await r.json();
+  return d.candidates?.[0]?.content?.parts?.[0]?.text||"";
 }
 
 function upd(pct,msg){
@@ -415,7 +389,7 @@ async function gen(){
   sst(1);const t2=setTimeout(()=>sst(2),5000),t3=setTimeout(()=>sst(3),12000);
 
   try{
-    const txt=await pollText(prompt);
+    const txt=await gemini([{text:prompt}]);
     clearTimeout(t2);clearTimeout(t3);sst(4);
     const r=parseResp(txt,n);
     if(!r)throw new Error("응답 파싱 실패. 다시 눌러주세요.");
